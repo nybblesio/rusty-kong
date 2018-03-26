@@ -13,16 +13,16 @@ const TILE_HEIGHT:   u32 = 16;
 const SPRITE_WIDTH:  u32 = 16;
 const SPRITE_HEIGHT: u32 = 16;
 
-const F_SPR_NONE:       u8 = 0b00000000;
-const F_SPR_ENABLED:    u8 = 0b00000001;
-const F_SPR_COLLIDED:   u8 = 0b00000010;
-const F_SPR_HFLIP:      u8 = 0b00000100;
-const F_SPR_VFLIP:      u8 = 0b00001000;
+const F_SPR_NONE:    u8 = 0b00000000;
+const F_SPR_ENABLED: u8 = 0b00000001;
+const F_SPR_COLLIDED:u8 = 0b00000010;
+const F_SPR_HFLIP:   u8 = 0b00000100;
+const F_SPR_VFLIP:   u8 = 0b00001000;
 
-const F_BG_NONE:        u8 = 0b00000000;
-const F_BG_ENABLED:     u8 = 0b00000001;
-const F_BG_HFLIP:       u8 = 0b00000010;
-const F_BG_VFLIP:       u8 = 0b00000100;
+const F_BG_NONE:     u8 = 0b00000000;
+const F_BG_ENABLED:  u8 = 0b00000001;
+const F_BG_HFLIP:    u8 = 0b00000010;
+const F_BG_VFLIP:    u8 = 0b00000100;
 
 struct Palette {
     entries: Vec<PaletteEntry>
@@ -59,9 +59,19 @@ lazy_static! {
     static ref BG1_CNTL:Vec<BackgroundControlBlock> = vec!();
 }
 
+fn video_bg(canvas: &mut WindowCanvas) {
+
+}
+
+fn video_fg(canvas: &mut WindowCanvas) {
+
+}
+
 pub fn video_update(canvas: &mut WindowCanvas) {
     canvas.set_draw_color(Color::RGB(255, 0, 0));
     canvas.clear();
+    video_bg(canvas);
+    video_fg(canvas);
     canvas.present();
 }
 

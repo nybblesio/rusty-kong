@@ -13,13 +13,48 @@ pub enum GameState {
     KongRetreats,
 }
 
+struct StateHandlers {
+    enter: fn(),
+    update: fn(),
+    leave: fn()
+}
+
 static mut PREVIOUS_STATE:GameState = GameState::None;
 static mut CURRENT_STATE:GameState = GameState::None;
 static mut NEXT_STATE:GameState = GameState::None;
 
-pub fn game_state_go(next_state:GameState) {
+lazy_static! {
+    static ref STATE_HANDLERS:Vec<StateHandlers> = vec!(
+        StateHandlers {enter: state_nop,     update: state_nop,      leave: state_nop},
+        StateHandlers {enter: boot_enter,    update: boot_update,    leave: boot_leave},
+        StateHandlers {enter: attract_enter, update: attract_update, leave: attract_leave}
+    );
+}
+
+fn state_nop() {
+}
+
+fn boot_enter() {
+}
+
+fn boot_update() {
+}
+
+fn boot_leave() {
+}
+
+fn attract_enter() {
+}
+
+fn attract_update() {
+}
+
+fn attract_leave() {
+}
+
+pub fn game_state_go(state:GameState) {
     unsafe {
-        NEXT_STATE = next_state;
+        NEXT_STATE = state;
     }
 }
 
