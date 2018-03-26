@@ -3,6 +3,14 @@ name = "rusty-kong"
 version = "0.1.0"
 authors = ["Jeff Panici <jeff@nybbles.io>"]
 
+[[bin]]
+name = "rusty-kong"
+path = "src/game/main.rs"
+
+[[bin]]
+name = "ripper"
+path = "src/ripper/main.rs"
+
 [dependencies]
 sdl2 = "0.31"
 lazy_static = "1.0"

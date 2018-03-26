@@ -10,10 +10,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1cebbeed-ce2e-4f4a-8e39-cb1f120d6d05" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/taking_break.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/game/main.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/game/rusty_kong/level/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/game/rusty_kong/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/game/rusty_kong/player/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/game/rusty_kong/sound/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ripper/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,16 +32,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="main.rs" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main.rs">
+      <file leaf-file-name="todo.txt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/todo.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="788">
-              <caret line="100" column="8" lean-forward="true" selection-start-line="100" selection-start-column="8" selection-end-line="100" selection-end-column="8" />
+            <state relative-caret-position="660">
+              <caret line="20" selection-start-line="20" selection-end-line="20" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Rust File" />
+      </list>
+    </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -43,6 +58,8 @@
       <find>videoSubSystem</find>
       <find>into_can</find>
       <find>Noth</find>
+      <find>Result</find>
+      <find>vec!</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -51,10 +68,20 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/todo.txt" />
         <option value="$PROJECT_DIR$/taking_break.txt" />
-        <option value="$PROJECT_DIR$/Cargo.toml" />
+        <option value="$PROJECT_DIR$/src/game_state.rs" />
+        <option value="$PROJECT_DIR$/src/state_machine.rs" />
+        <option value="$PROJECT_DIR$/src/rusty_kong/player/mod.rs" />
+        <option value="$PROJECT_DIR$/src/rusty_kong/state_machine/mod.rs" />
+        <option value="$PROJECT_DIR$/src/rusty_kong/level/mod.rs" />
+        <option value="$PROJECT_DIR$/src/rusty_kong/sound/mod.rs" />
+        <option value="$PROJECT_DIR$/src/rusty_kong/mod.rs" />
         <option value="$PROJECT_DIR$/src/main.rs" />
+        <option value="$PROJECT_DIR$/src/rusty_kong/video/mod.rs" />
+        <option value="$PROJECT_DIR$/src/ripper/main.rs" />
+        <option value="$PROJECT_DIR$/Cargo.toml" />
+        <option value="$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs" />
+        <option value="$PROJECT_DIR$/todo.txt" />
       </list>
     </option>
   </component>
@@ -90,6 +117,12 @@
               <item name="rusty-kong" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="rusty-kong" type="b2602c69:ProjectViewProjectNode" />
+              <item name="rusty-kong" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="game" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -98,13 +131,20 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="Subsystem&#9;null&#9;null" />
+    <property name="SearchEverywhereHistoryKey" value="todo&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/todo.txt&#10;taking&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/taking_break.txt&#10;Subsystem&#9;null&#9;null" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
     <property name="org.rust.hideToolchainNotifications" value="true" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.language" />
+    <property name="settings.editor.selected.configurable" value="org.rust.cargo.project.configurable.RustProjectConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/game" />
+      <recent name="$PROJECT_DIR$/src/rusty_kong" />
+      <recent name="$PROJECT_DIR$/src/state_machine" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -118,15 +158,27 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
-    <configuration name="Rusty Kong" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+  <component name="RunManager" selected="Cargo Command.Rusty Kong">
+    <configuration name="Ripper" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="channel" value="DEFAULT" />
-      <option name="command" value="run" />
+      <option name="command" value="run --bin ripper" />
       <option name="nocapture" value="true" />
       <option name="backtrace" value="SHORT" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <envs />
     </configuration>
+    <configuration name="Rusty Kong" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="run --bin rusty-kong" />
+      <option name="nocapture" value="true" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+    </configuration>
+    <list>
+      <item itemvalue="Cargo Command.Rusty Kong" />
+      <item itemvalue="Cargo Command.Ripper" />
+    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -138,12 +190,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1522061868225</updated>
-      <workItem from="1522061871618" duration="5260000" />
+      <workItem from="1522061871618" duration="14174000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5260000" />
+    <option name="totallyTimeSpent" value="14174000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1440" y="275" width="2560" height="1417" extended-state="0" />
@@ -154,10 +206,10 @@
       <window_info anchor="right" id="Cargo" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" weight="0.32942098" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32942098" />
-      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Version Control" weight="0.32942098" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32942098" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Terminal" weight="0.32942098" />
       <window_info id="Favorites" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3998435" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -175,41 +227,13 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/todo.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="16" column="9" selection-start-line="16" selection-start-column="9" selection-end-line="16" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/taking_break.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Cargo.lock">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/libcore/result.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="778" column="11" selection-start-line="778" selection-start-column="11" selection-end-line="778" selection-end-column="11" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/target/debug/build/sdl2-sys-b262824294d0d6b9/out/bindings.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
           <caret line="218" selection-start-line="218" selection-end-line="218" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/controller.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="317" column="27" selection-start-line="317" selection-start-column="27" selection-end-line="317" selection-end-column="27" />
         </state>
       </provider>
     </entry>
@@ -230,13 +254,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/video.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="1019" column="34" selection-start-line="1019" selection-start-column="34" selection-end-line="1019" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/libstd/macros.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1052">
@@ -244,41 +261,134 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.1/src/lib.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2060" />
-      </provider>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.1/Cargo.toml">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.1/src/macros.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
+        <state relative-caret-position="-2933">
           <caret line="113" column="13" lean-forward="true" selection-start-line="113" selection-start-column="13" selection-end-line="113" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.1/src/serde.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4834" />
+        <state relative-caret-position="-2534" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Cargo.toml">
+    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.1/src/lib.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
+        <state relative-caret-position="-19139" />
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/libcore/option.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="433">
-          <caret line="409" column="42" selection-start-line="409" selection-start-column="42" selection-end-line="409" selection-end-column="42" />
+        <state relative-caret-position="400">
+          <caret line="160" selection-start-line="160" selection-end-line="160" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.rs">
+    <entry file="file://$PROJECT_DIR$/taking_break.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="788">
-          <caret line="100" column="8" lean-forward="true" selection-start-line="100" selection-start-column="8" selection-end-line="100" selection-end-column="8" />
+        <state relative-caret-position="198">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="99">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+          <folding>
+            <element signature="e#483#484#0" expanded="true" />
+            <element signature="e#505#506#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/player/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/level/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/video.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="1018" column="4" selection-start-line="1018" selection-start-column="4" selection-end-line="1018" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/libcore/result.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="255" column="9" selection-start-line="255" selection-start-column="9" selection-end-line="255" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/controller.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="689">
+          <caret line="409" column="20" lean-forward="true" selection-start-line="409" selection-start-column="20" selection-end-line="409" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/sound/mod.rs">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/liballoc/vec.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="986">
+          <caret line="446" selection-start-line="446" selection-end-line="446" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/mod.rs">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ripper/main.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="33">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="561">
+          <caret line="17" column="40" lean-forward="true" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/main.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Cargo.toml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todo.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
         </state>
       </provider>
     </entry>
