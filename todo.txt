@@ -11,7 +11,15 @@ Notes
 
 Tasks
 ---------
+- add surface: to SpriteControlBlock & BackgroundControlBlock
+- add background_surface: to video module and bundle with WindowCanvas
+- SpriteControlBlock & BackgroundControlBlock ::update locks surface and updates pixels & sets logical palette
+- background_surface is ::copy to canvas
+- sprites as ::copy to canvas
 - implement level data structure
+    - tilemaps.rs: use mame to decode arcade tile maps and bring into rust codebase
+    - implement bg_set-something to take a level & push into BG1_CNTL
+    - data structure to encode AI, actor positions, etc.
 
 Done
 ---------
