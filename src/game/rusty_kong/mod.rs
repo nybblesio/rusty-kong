@@ -1,3 +1,15 @@
+// --------------------------------------------------------------------------
+//
+// Rusty Kong
+// Copyright (C) 2018 Jeff Panici
+// All rights reserved.
+//
+// This software source file is licensed according to the
+// MIT License.  Refer to the LICENSE file distributed along
+// with this source file to learn more.
+//
+// --------------------------------------------------------------------------
+
 mod video;
 mod sound;
 mod player;
@@ -81,7 +93,6 @@ pub fn game_run() {
                 _ => {}
             }
         }
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         game_update(&mut system_interfaces.controller);
         game_render(&mut system_interfaces.canvas);
     }

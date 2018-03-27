@@ -1,3 +1,15 @@
+// --------------------------------------------------------------------------
+//
+// Rusty Kong
+// Copyright (C) 2018 Jeff Panici
+// All rights reserved.
+//
+// This software source file is licensed according to the
+// MIT License.  Refer to the LICENSE file distributed along
+// with this source file to learn more.
+//
+// --------------------------------------------------------------------------
+
 use rusty_kong::player::player_update;
 
 #[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
@@ -23,6 +35,7 @@ static mut PREVIOUS_STATE:GameState = GameState::None;
 static mut CURRENT_STATE:GameState = GameState::None;
 static mut NEXT_STATE:GameState = GameState::None;
 
+#[allow(dead_code)]
 lazy_static! {
     static ref STATE_HANDLERS:Vec<StateHandlers> = vec!(
         StateHandlers {enter: state_nop,     update: state_nop,      leave: state_nop},
