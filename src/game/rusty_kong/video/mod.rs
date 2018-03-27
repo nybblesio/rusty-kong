@@ -12,6 +12,7 @@
 
 mod common;
 use self::common::*;
+pub use self::common::TileMaps;
 
 mod palettes;
 use self::palettes::get_palette;
@@ -22,10 +23,9 @@ use self::sprites::get_sprite_bitmap;
 mod tiles;
 use self::tiles::get_tile_bitmap;
 
-use std::vec::Vec;
+mod tile_maps;
 
 use sdl2::Sdl;
-use sdl2::pixels::Color;
 use sdl2::render::WindowCanvas;
 
 lazy_static! {
@@ -49,6 +49,10 @@ fn video_fg(canvas: &mut WindowCanvas) {
         //      copy to canvas
         fg_cntl.update();
     }
+}
+
+pub fn video_set_bg(map: TileMaps) {
+
 }
 
 // XXX: structure passed in here should hold WindowCanvas, background buffer, and any other state
