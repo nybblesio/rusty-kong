@@ -11,11 +11,11 @@ Notes
 
 Tasks
 ---------
-- implement state machine structure
-    * enter, update, leave
-
 - implement level data structure
 
 Done
 ---------
 - implement video control structure
+- implement state machine structure
+    * enter, update, leave
+- implement the ripper tool

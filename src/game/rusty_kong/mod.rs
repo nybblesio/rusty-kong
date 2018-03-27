@@ -16,11 +16,9 @@ mod player;
 mod state_machine;
 
 use sdl2;
-use simple_logger;
 
 use sdl2::Sdl;
 use sdl2::event::Event;
-use std::time::Duration;
 use sdl2::keyboard::Keycode;
 use sdl2::render::WindowCanvas;
 use sdl2::controller::GameController;
@@ -104,7 +102,7 @@ fn game_render(canvas: &mut WindowCanvas) {
 }
 
 fn game_update(controller: &GameController) {
-    use self::state_machine::game_state_go;
+    //use self::state_machine::game_state_go;
     use self::state_machine::game_state_update;
 
     game_state_update();
