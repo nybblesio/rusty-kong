@@ -12,6 +12,7 @@
 
 mod video;
 mod sound;
+mod level;
 mod player;
 mod state_machine;
 
@@ -23,9 +24,13 @@ use sdl2::keyboard::Keycode;
 use sdl2::render::WindowCanvas;
 use sdl2::controller::GameController;
 
-struct SystemInterfaces {
+use self::video::VideoGenerator;
+use self::state_machine::GameState;
+
+struct SystemInterfaces<'a> {
     controller: GameController,
-    canvas: WindowCanvas,
+    video: VideoGenerator<'a>,
+    game_state: GameState
 }
 
 fn controller_init(sdl_context: &Sdl) -> GameController {
@@ -79,8 +84,11 @@ fn controller_init(sdl_context: &Sdl) -> GameController {
 }
 
 pub fn game_run() {
+    use rusty_kong::video::video_update;
+
     let context = sdl2::init().unwrap();
     let mut system_interfaces = game_init(&context).unwrap();
+
     let mut event_pump = context.event_pump().unwrap();
     'running: loop {
         for event in event_pump.poll_iter() {
@@ -91,30 +99,18 @@ pub fn game_run() {
                 _ => {}
             }
         }
-        game_update(&mut system_interfaces.controller);
-        game_render(&mut system_interfaces.canvas);
+        system_interfaces.game_state.update(&system_interfaces.controller);
+        video_update(&mut system_interfaces.video);
     }
-}
-
-fn game_render(canvas: &mut WindowCanvas) {
-    use rusty_kong::video::video_update;
-    video_update(canvas);
-}
-
-fn game_update(controller: &GameController) {
-    //use self::state_machine::game_state_go;
-    use self::state_machine::game_state_update;
-
-    game_state_update();
 }
 
 fn game_init(context:&Sdl) -> Result<SystemInterfaces, String> {
     use self::state_machine::game_state_init;
     use rusty_kong::video::video_init;
 
-    game_state_init();
     return Ok(SystemInterfaces {
+        game_state: game_state_init(),
+        video: video_init(&context),
         controller: controller_init(&context),
-        canvas: video_init(&context)
     });
 }

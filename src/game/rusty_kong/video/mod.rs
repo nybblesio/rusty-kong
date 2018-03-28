@@ -26,58 +26,63 @@ use self::tiles::get_tile_bitmap;
 mod tile_maps;
 
 use sdl2::Sdl;
+use sdl2::surface::Surface;
 use sdl2::render::WindowCanvas;
+use sdl2::pixels::PixelFormatEnum;
 
-lazy_static! {
-    static ref SPR_CNTL:[SpriteControlBlock; SPRITE_MAX as usize] = SpriteControlBlock::new_control_table();
-    static ref BG1_CNTL:[BackgroundControlBlock; (TILE_ROW_COUNT * TILE_COL_COUNT) as usize] = BackgroundControlBlock::new_control_table();
+pub struct VideoGenerator<'a> {
+    canvas: WindowCanvas,
+    bg_surface: Surface<'a>,
+    spr_cntl: SpriteControlTable,
+    bg1_cntl: BackgroundControlTable
 }
 
-fn video_bg(canvas: &mut WindowCanvas) {
+fn video_bg(video: &mut VideoGenerator) {
     // XXX: need Surface that is the background buffer
     //      only changed tiles get rendered into this buffer
     //      copy this into canvas
-    for bg_cntl in BG1_CNTL.iter() {
-        bg_cntl.update();
-    }
+//    for bg_cntl in video.iter() {
+//        bg_cntl.update();
+//    }
 }
 
-// XXX: structure passed in here should hold WindowCanvas, background buffer, and any other state
-fn video_fg(canvas: &mut WindowCanvas) {
-    for fg_cntl in SPR_CNTL.iter() {
-        // XXX: update internal surface
-        //      copy to canvas
-        fg_cntl.update();
-    }
+fn video_fg(video: &mut VideoGenerator) {
+//    for fg_cntl in SPR_CNTL.iter() {
+//        // XXX: update internal surface
+//        //      copy to canvas
+//        fg_cntl.update();
+//    }
 }
 
 pub fn video_set_bg(map: TileMaps) {
 
 }
 
-// XXX: structure passed in here should hold WindowCanvas, background buffer, and any other state
-pub fn video_update(canvas: &mut WindowCanvas) {
-//    canvas.set_draw_color(Color::RGB(0, 0, 0));
-//    canvas.clear();
-    video_bg(canvas);
+pub fn video_update(video:&mut VideoGenerator) {
+    video_bg(video);
     //canvas.copy(background_surface, .....);
-
-    video_fg(canvas);
-
-    canvas.present();
+    video_fg(video);
+    video.canvas.present();
 }
 
-pub fn video_init(sdl_context: &Sdl) -> WindowCanvas {
-    // XXX: set up the background buffer and package it with WindowCanvas
+pub fn video_init(sdl_context: &Sdl) -> VideoGenerator {
     let video_subsystem = sdl_context.video().unwrap();
     let window = video_subsystem.window("Rusty Kong", SCREEN_WIDTH * 4, SCREEN_HEIGHT * 4)
         .position_centered()
         .opengl()
         .build()
         .unwrap();
-    return window
+    let canvas = window
         .into_canvas()
         .present_vsync()
         .build()
         .unwrap();
+    let bg_surface = Surface::new(256, 256, PixelFormatEnum::Index8)
+        .unwrap();
+    VideoGenerator {
+        canvas,
+        bg_surface,
+        spr_cntl: SpriteControlTable::new(),
+        bg1_cntl: BackgroundControlTable::new(),
+    }
 }

@@ -12,6 +12,12 @@
 
 #[allow(dead_code)]
 #[derive(Clone, Copy)]
-struct Level {
+pub struct Level {
     number: u32,
+}
+
+impl Level {
+    pub fn new() -> Level {
+        Level { number: 1 }
+    }
 }

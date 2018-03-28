@@ -10,14 +10,17 @@
 //
 // --------------------------------------------------------------------------
 
-pub fn player_dies_enter() {
+use sdl2::controller::GameController;
+use super::GameState;
+
+pub fn player_dies_enter(game_state:&GameState) {
 
 }
 
-pub fn player_dies_update() {
+pub fn player_dies_leave(game_state:&GameState) {
 
 }
 
-pub fn player_dies_leave() {
+pub fn player_dies_update(game_state:&GameState, controller:&GameController) {
 
 }
