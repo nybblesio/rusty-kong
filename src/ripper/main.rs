@@ -10,15 +10,21 @@
 //
 // --------------------------------------------------------------------------
 
+#[macro_use]
+extern crate lazy_static;
 extern crate sdl2;
 
 use std::env;
 use std::vec::Vec;
 use std::path::Path;
+use std::collections::HashSet;
+
 use sdl2::rect::Rect;
 use sdl2::image::{LoadTexture, INIT_PNG};
 use sdl2::event::Event;
+use sdl2::pixels::Color;
 use sdl2::keyboard::Keycode;
+use sdl2::render::WindowCanvas;
 
 #[allow(dead_code)]
 enum ToolMode {
@@ -29,11 +35,98 @@ enum ToolMode {
 }
 
 #[derive(Copy, Clone, Hash, Eq, PartialEq)]
-struct PaletteEntry(u8, u8, u8);
+struct PaletteEntry {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8
+}
+
+impl PaletteEntry {
+    pub fn new() -> PaletteEntry {
+        PaletteEntry { r: 0, g: 0, b: 0, a: 0xff }
+    }
+}
+
+#[derive(Copy, Clone, Hash, Eq, PartialEq)]
+struct TileMapEntry(u16, u8, u8);
 
 #[derive(Copy, Clone, Hash, Eq, PartialEq)]
 struct Palette {
     entries: [PaletteEntry; 4]
+}
+
+fn find_palette_match(
+        canvas: &mut WindowCanvas,
+        cx:usize,
+        cy:usize) -> u8 {
+    let mut palette_number = 0;
+    let mut unique_colors = HashSet::new();
+
+    for _ty in 0..8 as usize {
+        for _tx in 0..8 as usize {
+            let pixels = canvas
+                .read_pixels(
+                    Rect::new((cx + _tx) as i32, (cy + _ty) as i32, 1, 1),
+                    canvas.default_pixel_format())
+                .unwrap();
+            let color = Color::RGBA(pixels[0], pixels[1], pixels[2], pixels[3]);
+            if !unique_colors.contains(&color) {
+                unique_colors.insert(color);
+            }
+        }
+    }
+
+    println!("unique_colors.len = {}", unique_colors.len());
+    for color in unique_colors.iter() {
+        println!("r: {}, g: {}, b: {}, a: {}", color.r, color.g, color.b, color.a);
+    }
+    println!();
+
+    for pal in PAL_CNTL.iter() {
+        let mut pal_score = 0;
+        for color in unique_colors.iter() {
+            for entry in pal.entries.iter() {
+                if color.r == entry.r
+                && color.g == entry.g
+                && color.b == entry.b {
+                    pal_score += 1;
+                }
+            }
+        }
+        if pal_score == unique_colors.len() {
+            break;
+        }
+        palette_number += 1;
+    }
+
+    palette_number as u8
+}
+
+fn create_match_bitmap(
+        canvas: &mut WindowCanvas,
+        cx:usize,
+        cy:usize) -> [u8; 8*8] {
+    let mut tile_data = [0 as u8; 8*8];
+
+    for _ty in 0..8 as usize {
+        for _tx in 0..8 as usize {
+            let pixels = canvas
+                .read_pixels(
+                    Rect::new((cx + _tx) as i32, (cy + _ty) as i32, 1, 1),
+                    canvas.default_pixel_format())
+                .unwrap();
+            if pixels[0] != 0 && pixels[1] != 0 && pixels[2] != 0 {
+                //print!("1");
+                tile_data[_ty * 8 + _tx] = 1;
+            } else {
+                //print!("0");
+            }
+        }
+        //println!();
+    }
+
+    tile_data
 }
 
 fn run(mode:ToolMode, png: &Path) {
@@ -69,28 +162,13 @@ fn run(mode:ToolMode, png: &Path) {
 
     match mode {
         ToolMode::Map => {
-            let mut tile_map = [0 as u8; 32*32];
+            let mut tile_map = [TileMapEntry(0,0,0); 32*32];
             let mut _cy:usize = 0;
             let mut _cx:usize = 0;
             for _y in 0..32 {
                 for _x in 0..32 {
-                    let mut tile_data = [0 as u8; 8*8];
-                    for _ty in 0..8 as usize {
-                        for _tx in 0..8 as usize {
-                            let pixels = canvas
-                                .read_pixels(
-                                    Rect::new((_cx + _tx) as i32, (_cy + _ty) as i32, 1, 1),
-                                    canvas.default_pixel_format())
-                                .unwrap();
-                            if pixels[0] != 0 && pixels[1] != 0 && pixels[2] != 0 {
-                                print!("1");
-                                tile_data[_ty * 8 + _tx] = 1;
-                            } else {
-                                print!("0");
-                            }
-                        }
-                        println!();
-                    }
+                    let palette_number = find_palette_match(&mut canvas, _cx, _cy);
+                    let tile_data = create_match_bitmap(&mut canvas, _cx, _cy);
 
                     for tile_number in 0..256 {
                         let ref_tile:&[u8; 64] = &TILE_BITMAPS[tile_number];
@@ -104,10 +182,13 @@ fn run(mode:ToolMode, png: &Path) {
                             }
                         }
                         if equal {
-                            tile_map[_y * 32 + _x] = tile_number as u8;
+                            tile_map[_y * 32 + _x] = TileMapEntry(
+                                tile_number as u16,
+                                palette_number as u8,
+                                0);
                             break;
                         }
-                     }
+                    }
                     _cx += 8;
                 }
                 _cx = 0;
@@ -115,14 +196,19 @@ fn run(mode:ToolMode, png: &Path) {
             }
 
 
-            println!("static TILE_MAP:[u8; 32*32] = [");
+            println!("static TILE_MAP:[TileMapEntry; 32*32] = [");
             for _y in 0..32 as usize {
                 print!("\t");
                 for _x in 0..32 as usize {
                     if _x > 0 {
                         print!(",");
                     }
-                    print!("0x{:02x}", tile_map[_y * 32 + _x]);
+                    let entry = tile_map[_y * 32 + _x];
+                    print!(
+                        "TileMapEntry(0x{:02x}, 0x{:02x}, 0x{:02x})",
+                        entry.0,
+                        entry.1,
+                        entry.2);
                 }
                 print!(",\n");
             }
@@ -130,8 +216,8 @@ fn run(mode:ToolMode, png: &Path) {
         }
 
         ToolMode::Palette => {
-            let mut palettes = [Palette {entries: [PaletteEntry(0, 0, 0); 4]}; 64];
-            let mut current_palette: Palette = Palette {entries: [PaletteEntry(0, 0, 0); 4]};
+            let mut palettes = [Palette {entries: [PaletteEntry::new(); 4]}; 64];
+            let mut current_palette: Palette = Palette {entries: [PaletteEntry::new(); 4]};
 
             let mut palette_idx:usize = 0;
             let mut palette_entry_idx:usize = 0;
@@ -152,7 +238,11 @@ fn run(mode:ToolMode, png: &Path) {
                             Rect::new(_cx as i32, _cy as i32, 1, 1),
                             canvas.default_pixel_format())
                         .unwrap();
-                    current_palette.entries[palette_entry_idx] = PaletteEntry(pixels[0], pixels[1], pixels[2]);
+                    current_palette.entries[palette_entry_idx] = PaletteEntry {
+                        r: pixels[0],
+                        g: pixels[1],
+                        b: pixels[2],
+                        a: 0xff };
                     palette_entry_idx += 1;
 
                     _cx += 50;
@@ -172,9 +262,9 @@ fn run(mode:ToolMode, png: &Path) {
                 for entry in palette.entries.iter() {
                     println!(
                         "\t\t\t\tPaletteEntry {{r: 0x{:02x}, g: 0x{:02x}, b: 0x{:02x}, a: 0xff}},",
-                        entry.0,
-                        entry.1,
-                        entry.2);
+                        entry.r,
+                        entry.g,
+                        entry.b);
                 }
                 println!("\t\t\t]");
                 println!("\t\t}},");
@@ -188,10 +278,10 @@ fn run(mode:ToolMode, png: &Path) {
             let mut _cy = 0;
             let mut _cx = 0;
             let mut match_palette: Palette = Palette {entries: [
-                PaletteEntry(0x00, 0x00, 0x00),
-                PaletteEntry(0x94, 0x31, 0xec),
-                PaletteEntry(0x06, 0x04, 0x8e),
-                PaletteEntry(0xff, 0xf3, 0x14),
+                PaletteEntry { r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+                PaletteEntry { r: 0x94, g: 0x31, b: 0xec, a: 0xff},
+                PaletteEntry { r: 0x06, g: 0x04, b: 0x8e, a: 0xff},
+                PaletteEntry { r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
             ]};
 
             let mut tiles = [[0 as u8; 8*8]; 256];
@@ -209,9 +299,9 @@ fn run(mode:ToolMode, png: &Path) {
                                 .unwrap();
                             let mut entry_idx = 0;
                             for entry in match_palette.entries.iter() {
-                                if entry.0 == pixels[0]
-                                && entry.1 == pixels[1]
-                                && entry.2 == pixels[2] {
+                                if entry.r == pixels[0]
+                                && entry.g == pixels[1]
+                                && entry.b == pixels[2] {
                                     tile_data[_y * 8 + _x] = entry_idx;
                                     break;
                                 }
@@ -253,10 +343,10 @@ fn run(mode:ToolMode, png: &Path) {
             let mut _cy = 0;
             let mut _cx = 0;
             let mut match_palette: Palette = Palette {entries: [
-                PaletteEntry( 0x00, 0x00, 0x00),
-                PaletteEntry( 0xff, 0x9d, 0x9e),
-                PaletteEntry( 0xff, 0xf3, 0x14),
-                PaletteEntry( 0x0a, 0x07, 0xe8),
+                PaletteEntry { r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+                PaletteEntry { r: 0xff, g: 0x9d, b: 0x9e, a: 0xff},
+                PaletteEntry { r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+                PaletteEntry { r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
             ]};
 
             let mut sprites = [[0 as u8; 16*16]; 128];
@@ -277,9 +367,9 @@ fn run(mode:ToolMode, png: &Path) {
                                 .unwrap();
                             let mut entry_idx = 0;
                             for entry in match_palette.entries.iter() {
-                                if entry.0 == pixels[0]
-                                    && entry.1 == pixels[1]
-                                    && entry.2 == pixels[2] {
+                                if entry.r == pixels[0]
+                                && entry.g == pixels[1]
+                                && entry.b == pixels[2] {
                                     spr_data[_y * 16 + _x] = entry_idx;
                                     break;
                                 }
@@ -346,6 +436,587 @@ fn main() {
 
         run(mode, Path::new(&args[2]));
     }
+}
+
+lazy_static! {
+	static ref PAL_CNTL:Vec<Palette> = vec![
+		// #0
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x9d, b: 0x9e, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+			]
+		},
+		// #1
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #2
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0xdc, g: 0x02, b: 0x04, a: 0xff},
+			]
+		},
+		// #3
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0x12, g: 0xef, b: 0x11, a: 0xff},
+			]
+		},
+		// #4
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+			]
+		},
+		// #5
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0xe2, g: 0x0c, b: 0xeb, a: 0xff},
+				PaletteEntry {r: 0x1a, g: 0xf9, b: 0xf8, a: 0xff},
+			]
+		},
+		// #6
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+			]
+		},
+		// #7
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x07, g: 0x05, b: 0xac, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #8
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x07, g: 0x05, b: 0xac, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+			]
+		},
+		// #9
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xe8, g: 0x57, b: 0xf0, a: 0xff},
+			]
+		},
+		// #10
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xdc, g: 0x02, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0xe8, g: 0x57, b: 0xf0, a: 0xff},
+			]
+		},
+		// #11
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+			]
+		},
+		// #12
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+			]
+		},
+		// #13
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+			]
+		},
+		// #14
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x9f, g: 0x9e, b: 0xd6, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+			]
+		},
+		// #15
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+			]
+		},
+		// #16
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x9d, b: 0x9e, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+			]
+		},
+		// #17
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #18
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0xdc, g: 0x02, b: 0x04, a: 0xff},
+			]
+		},
+		// #19
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #20
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #21
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #22
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #23
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x07, g: 0x05, b: 0xac, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #24
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x07, g: 0x05, b: 0xac, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+			]
+		},
+		// #25
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xe8, g: 0x57, b: 0xf0, a: 0xff},
+			]
+		},
+		// #26
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xdc, g: 0x02, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0xe8, g: 0x57, b: 0xf0, a: 0xff},
+			]
+		},
+		// #27
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+			]
+		},
+		// #28
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+			]
+		},
+		// #29
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+			]
+		},
+		// #30
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x9f, g: 0x9e, b: 0xd6, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+			]
+		},
+		// #31
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+			]
+		},
+		// #32
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x9d, b: 0x9e, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+			]
+		},
+		// #33
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #34
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0xdc, g: 0x02, b: 0x04, a: 0xff},
+			]
+		},
+		// #35
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x94, g: 0x31, b: 0xec, a: 0xff},
+				PaletteEntry {r: 0x06, g: 0x04, b: 0x8e, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+			]
+		},
+		// #36
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x94, g: 0x31, b: 0xec, a: 0xff},
+				PaletteEntry {r: 0x06, g: 0x04, b: 0x8e, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+			]
+		},
+		// #37
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x94, g: 0x31, b: 0xec, a: 0xff},
+				PaletteEntry {r: 0x06, g: 0x04, b: 0x8e, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+			]
+		},
+		// #38
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x94, g: 0x31, b: 0xec, a: 0xff},
+				PaletteEntry {r: 0x06, g: 0x04, b: 0x8e, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+			]
+		},
+		// #39
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x07, g: 0x05, b: 0xac, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #40
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x07, g: 0x05, b: 0xac, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+			]
+		},
+		// #41
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xe8, g: 0x57, b: 0xf0, a: 0xff},
+			]
+		},
+		// #42
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xdc, g: 0x02, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0xe8, g: 0x57, b: 0xf0, a: 0xff},
+			]
+		},
+		// #43
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+			]
+		},
+		// #44
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+			]
+		},
+		// #45
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+			]
+		},
+		// #46
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x9f, g: 0x9e, b: 0xd6, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+			]
+		},
+		// #47
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+			]
+		},
+		// #48
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x9d, b: 0x9e, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+			]
+		},
+		// #49
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #50
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0xdc, g: 0x02, b: 0x04, a: 0xff},
+			]
+		},
+		// #51
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+			]
+		},
+		// #52
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+			]
+		},
+		// #53
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+			]
+		},
+		// #54
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+			]
+		},
+		// #55
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x07, g: 0x05, b: 0xac, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+			]
+		},
+		// #56
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x07, g: 0x05, b: 0xac, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+			]
+		},
+		// #57
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xe8, g: 0x57, b: 0xf0, a: 0xff},
+			]
+		},
+		// #58
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xdc, g: 0x02, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0xe8, g: 0x57, b: 0xf0, a: 0xff},
+			]
+		},
+		// #59
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+			]
+		},
+		// #60
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xfc, b: 0xfe, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0xf3, b: 0x14, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+			]
+		},
+		// #61
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x0a, g: 0x07, b: 0xe8, a: 0xff},
+				PaletteEntry {r: 0x15, g: 0xba, b: 0xf4, a: 0xff},
+				PaletteEntry {r: 0x11, g: 0x75, b: 0xee, a: 0xff},
+			]
+		},
+		// #62
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x9f, g: 0x9e, b: 0xd6, a: 0xff},
+				PaletteEntry {r: 0xa0, g: 0xbc, b: 0xf5, a: 0xff},
+				PaletteEntry {r: 0xff, g: 0x03, b: 0x04, a: 0xff},
+			]
+		},
+		// #63
+		Palette {
+			entries: [
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+				PaletteEntry {r: 0x00, g: 0x00, b: 0x00, a: 0xff},
+			]
+		},
+	];
 }
 
 static TILE_BITMAPS:[[u8; (8*8) as usize]; 256 as usize] = [
