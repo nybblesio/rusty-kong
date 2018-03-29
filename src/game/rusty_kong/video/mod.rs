@@ -25,7 +25,6 @@ use self::tiles::get_tile_bitmap;
 
 mod tile_maps;
 
-use sdl2;
 use sdl2::Sdl;
 use sdl2::surface::Surface;
 use sdl2::render::WindowCanvas;

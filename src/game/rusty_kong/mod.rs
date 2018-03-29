@@ -17,7 +17,6 @@ mod player;
 mod state_machine;
 
 use std::rc::Rc;
-use std::ops::DerefMut;
 use std::cell::RefCell;
 use std::borrow::BorrowMut;
 
@@ -32,7 +31,6 @@ use self::video::TileMaps;
 use self::video::VideoGenerator;
 
 use self::state_machine::GameState;
-use self::state_machine::GameStates;
 
 pub struct SystemInterfaces {
     context:    Option<Sdl>,
@@ -57,14 +55,17 @@ impl SystemInterfaces {
 
     pub fn init(&mut self) {
         self.context = Some(sdl2::init().unwrap());
-        self.game_state = Some(Rc::new(RefCell::new(GameState::init(self))));
-        self.event_pump = Some(Rc::new(RefCell::new(self.context.as_ref().unwrap().event_pump().unwrap())));
-        self.video_gen = Some(Rc::new(RefCell::new(VideoGenerator::init(self.context.as_ref().unwrap()))));
+        self.game_state = Some(Rc::new(
+            RefCell::new(GameState::init())));
+        self.event_pump = Some(Rc::new(
+            RefCell::new(self.context.as_ref().unwrap().event_pump().unwrap())));
+        self.video_gen = Some(Rc::new(
+            RefCell::new(VideoGenerator::init(self.context.as_ref().unwrap()))));
         self.controller_init();
     }
 
     pub fn event_pump(&mut self) {
-        let mut clone = self.event_pump.as_ref().unwrap().clone();
+        let clone = self.event_pump.as_ref().unwrap().clone();
         let mut event_pump = (*clone).borrow_mut();
         'running: loop {
             for event in event_pump.poll_iter() {
@@ -76,12 +77,12 @@ impl SystemInterfaces {
                 }
             }
             {
-                let mut clone = self.game_state.as_ref().unwrap().clone();
+                let clone = self.game_state.as_ref().unwrap().clone();
                 let mut game_state = (*clone).borrow_mut();
                 game_state.update();
             }
             {
-                let mut clone = self.video_gen.as_ref().unwrap().clone();
+                let clone = self.video_gen.as_ref().unwrap().clone();
                 let mut video_gen = (*clone).borrow_mut();
                 video_gen.update();
             }

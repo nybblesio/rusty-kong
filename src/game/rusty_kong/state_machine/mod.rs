@@ -117,21 +117,18 @@ pub struct GameState {
     next: GameStates,
     current: GameStates,
     previous: GameStates,
-    handlers: Vec<Rc<StateHandlers>>,
-    system: Option<Rc<RefCell<&'static SystemInterfaces>>>,
+    handlers: Vec<Rc<StateHandlers>>
 }
 
 impl GameState {
-    pub fn init(system:&'static SystemInterfaces) -> GameState {
+    pub fn init() -> GameState {
         let mut game_state = GameState::new();
-        game_state.system(system);
         game_state.transition_to(GameStates::Boot);
         game_state
     }
 
     pub fn new() -> GameState {
         GameState {
-            system:   None,
             level:    Level::new(),
             player:   JumpMan::new(),
             previous: GameStates::None,
@@ -213,12 +210,6 @@ impl GameState {
         }
     }
 
-    fn system(&mut self, system:&'static SystemInterfaces) {
-        let mut clone = self.system.as_ref().unwrap().clone();
-        let mut sys = (*clone).borrow_mut();
-        *sys = system;
-    }
-
     fn is_pending_transition(&self) -> bool {
         self.next != GameStates::None
     }
@@ -260,8 +251,10 @@ impl GameState {
     }
 
     pub fn set_bg(&mut self, tile_map:TileMaps) {
-        let mut clone = self.system.as_ref().unwrap().clone();
-        let sys = clone.borrow_mut();
-        //let mut video_gen = sys.video_gen.as_ref().unwrap().clone();
+//        let clone = self.system.as_ref().unwrap().clone();
+//        let sys = (*clone).borrow_mut();
+//        let vg_clone = sys.video_gen.as_ref().unwrap().clone();
+//        let mut video_gen = (*vg_clone).borrow_mut();
+//        video_gen.set_bg(tile_map);
     }
 }

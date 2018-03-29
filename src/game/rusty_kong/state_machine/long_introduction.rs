@@ -10,7 +10,6 @@
 //
 // --------------------------------------------------------------------------
 
-use std::borrow::BorrowMut;
 use super::GameState;
 
 pub fn long_intro_enter(game_state:&mut GameState) {

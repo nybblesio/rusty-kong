@@ -10,7 +10,6 @@
 //
 // --------------------------------------------------------------------------
 
-use super::SystemInterfaces;
 use super::GameState;
 
 pub fn attract_enter(game_state:&mut GameState) {

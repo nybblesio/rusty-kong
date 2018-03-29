@@ -10,7 +10,6 @@
 //
 // --------------------------------------------------------------------------
 
-use super::SystemInterfaces;
 use super::GameStates;
 use super::GameState;
 
