@@ -10,14 +10,15 @@
 //
 // --------------------------------------------------------------------------
 
-use sdl2::controller::GameController;
-use super::GameState;
+use super::SystemInterfaces;
+use super::GameStates;
 
-pub fn boot_enter(game_state:&GameState) {
+pub fn boot_enter(system:&SystemInterfaces) {
+    system.transition_to(GameStates::LongIntroduction);
 }
 
-pub fn boot_leave(game_state:&GameState) {
+pub fn boot_leave(system:&SystemInterfaces) {
 }
 
-pub fn boot_update(game_state:&GameState, controller:&GameController) {
+pub fn boot_update(system:&SystemInterfaces) {
 }

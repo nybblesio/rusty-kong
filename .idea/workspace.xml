@@ -10,7 +10,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1cebbeed-ce2e-4f4a-8e39-cb1f120d6d05" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/ripper/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ripper/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/attract.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/attract.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/boot.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/boot.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/game_play.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/game_play.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/how_high.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/how_high.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/kong_retreats.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/kong_retreats.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/long_introduction.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/long_introduction.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_dies.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_dies.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_wins.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_wins.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/state_nop.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/state_nop.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/video/common.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/video/common.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/video/tile_maps.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/video/tile_maps.rs" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,14 +35,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="main.rs" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/ripper/main.rs">
+      <file leaf-file-name="mod.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/mod.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="90" selection-start-line="90" selection-end-line="90" />
+            <state relative-caret-position="286">
+              <caret line="81" column="35" selection-start-line="81" selection-start-column="35" selection-end-line="81" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mod.rs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/mod.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="528">
+              <caret line="235" column="8" selection-start-line="235" selection-start-column="8" selection-end-line="235" selection-end-column="8" />
               <folding>
-                <element signature="e#959#960#0" expanded="true" />
-                <element signature="e#989#990#0" expanded="true" />
+                <element signature="e#7455#7456#0" expanded="true" />
+                <element signature="e#7500#7501#0" expanded="true" />
+                <element signature="e#7558#7559#0" expanded="true" />
+                <element signature="e#7611#7612#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -70,6 +95,7 @@
       <find>GameControllerSub</find>
       <find>),</find>
       <find>0x</find>
+      <find>game_state</find>
     </findStrings>
     <replaceStrings>
       <replace>PaletteEntry(</replace>
@@ -78,6 +104,7 @@
       <replace>0x00</replace>
       <replace>},</replace>
       <replace>PaletteEntry {</replace>
+      <replace>system</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -96,7 +123,6 @@
         <option value="$PROJECT_DIR$/src/rusty_kong/mod.rs" />
         <option value="$PROJECT_DIR$/src/main.rs" />
         <option value="$PROJECT_DIR$/src/rusty_kong/video/mod.rs" />
-        <option value="$PROJECT_DIR$/src/game/main.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/sound/mod.rs" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/none.rs" />
@@ -107,23 +133,24 @@
         <option value="$PROJECT_DIR$/src/game/rusty_kong/video/palettes.rs" />
         <option value="$PROJECT_DIR$/todo.txt" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/video/tilemaps.rs" />
-        <option value="$PROJECT_DIR$/src/game/rusty_kong/video/tile_maps.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/level/mod.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/player/mod.rs" />
-        <option value="$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs" />
-        <option value="$PROJECT_DIR$/src/game/rusty_kong/mod.rs" />
+        <option value="$PROJECT_DIR$/src/ripper/main.rs" />
+        <option value="$PROJECT_DIR$/src/game/rusty_kong/video/tile_maps.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/video/common.rs" />
-        <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/attract.rs" />
-        <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/boot.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/game_play.rs" />
+        <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/attract.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/how_high.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/kong_retreats.rs" />
-        <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/long_introduction.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_dies.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_wins.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/state_nop.rs" />
+        <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/long_introduction.rs" />
+        <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/boot.rs" />
+        <option value="$PROJECT_DIR$/src/game/main.rs" />
+        <option value="$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs" />
+        <option value="$PROJECT_DIR$/src/game/rusty_kong/mod.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/mod.rs" />
-        <option value="$PROJECT_DIR$/src/ripper/main.rs" />
       </list>
     </option>
   </component>
@@ -186,34 +213,6 @@
               <item name="rusty_kong" type="462c0819:PsiDirectoryNode" />
               <item name="video" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="rusty-kong" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rusty-kong" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="ripper" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rusty-kong" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="rusty-kong" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="sdl2" type="20ee2d1f:SyntheticLibraryElementNode" />
-            </path>
-            <path>
-              <item name="rusty-kong" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="sdl2" type="20ee2d1f:SyntheticLibraryElementNode" />
-              <item name="sdl2-0.31.0" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rusty-kong" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="sdl2" type="20ee2d1f:SyntheticLibraryElementNode" />
-              <item name="sdl2-0.31.0" type="462c0819:PsiDirectoryNode" />
-              <item name="examples" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -221,7 +220,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="taking&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/taking_break.txt&#10;common&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/common.rs&#10;tiles&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/tiles.rs&#10;todo&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/todo.txt&#10;main.rs&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/ripper/main.rs&#10;mod.rs&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/mod.rs&#10;sprite&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/sprites.rs&#10;pal&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/palettes.rs&#10;sprites&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/sprites.rs&#10;spri&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/sprites.rs&#10;SPRITE&#9;null&#9;null&#10;main&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/ripper/main.rs&#10;ripper&#9;RUN_CONFIGURATION&#9;Ripper&#10;player&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/player_dies.rs&#10;kong&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/kong_retreats.rs&#10;long&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/long_introduction.rs&#10;how_&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/how_high.rs&#10;game_pl&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/game_play.rs&#10;player_dies&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/player_dies.rs&#10;kong_re&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/kong_retreats.rs&#10;palett&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/palettes.rs&#10;Subsystem&#9;null&#9;null" />
+    <property name="SearchEverywhereHistoryKey" value="SystemINter&#9;null&#9;null&#10;comm&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/common.rs&#10;taking&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/taking_break.txt&#10;common&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/common.rs&#10;tiles&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/tiles.rs&#10;todo&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/todo.txt&#10;main.rs&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/ripper/main.rs&#10;mod.rs&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/mod.rs&#10;sprite&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/sprites.rs&#10;pal&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/palettes.rs&#10;sprites&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/sprites.rs&#10;spri&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/sprites.rs&#10;SPRITE&#9;null&#9;null&#10;main&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/ripper/main.rs&#10;ripper&#9;RUN_CONFIGURATION&#9;Ripper&#10;player&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/player_dies.rs&#10;kong&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/kong_retreats.rs&#10;long&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/long_introduction.rs&#10;how_&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/how_high.rs&#10;game_pl&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/game_play.rs&#10;player_dies&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/player_dies.rs&#10;kong_re&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/state_machine/kong_retreats.rs&#10;palett&#9;FILE&#9;file:///Users/jeff/src/nybbles/rusty-kong/src/game/rusty_kong/video/palettes.rs&#10;Subsystem&#9;null&#9;null" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -261,9 +260,11 @@
       <option name="channel" value="DEFAULT" />
       <option name="command" value="run --bin rusty-kong" />
       <option name="nocapture" value="true" />
-      <option name="backtrace" value="SHORT" />
+      <option name="backtrace" value="FULL" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <envs />
+      <envs>
+        <env name="RUST_BACKTRACE" value="1" />
+      </envs>
     </configuration>
     <list>
       <item itemvalue="Cargo Command.Rusty Kong" />
@@ -282,24 +283,26 @@
       <updated>1522061868225</updated>
       <workItem from="1522061871618" duration="34658000" />
       <workItem from="1522147044632" duration="27427000" />
-      <workItem from="1522232902935" duration="19279000" />
+      <workItem from="1522232902935" duration="39197000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="81364000" />
+    <option name="totallyTimeSpent" value="101282000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1440" y="275" width="2560" height="1417" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17966238" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.17966238" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="right" id="Cargo" order="3" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5004003" side_tool="true" weight="0.32942098" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32858273" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32858273" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49959967" weight="0.49406177" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.5969913" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.5969913" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39984164" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -308,7 +311,6 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32942098" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -345,24 +347,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="5" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/libcore/result.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="255" column="9" selection-start-line="255" selection-start-column="9" selection-end-line="255" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/liballoc/vec.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="986">
-          <caret line="446" selection-start-line="446" selection-end-line="446" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/sound/mod.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="363">
@@ -384,13 +372,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="144" selection-start-line="144" selection-end-line="144" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/sdl.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="433">
-          <caret line="52" column="39" selection-start-line="52" selection-start-column="39" selection-end-line="52" selection-end-column="39" />
         </state>
       </provider>
     </entry>
@@ -495,13 +476,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/tiles.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="986">
-          <caret line="2579" selection-start-line="2579" selection-end-line="2579" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/libcore/cmp.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
@@ -540,13 +514,6 @@
     <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/common.rs">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/controller.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="705">
-          <caret line="284" column="21" lean-forward="true" selection-start-line="284" selection-start-column="21" selection-end-line="284" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/libcore/option.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
@@ -561,91 +528,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/mod.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="102" column="11" selection-start-line="102" selection-start-column="11" selection-end-line="102" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/boot.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="693">
-          <caret line="21" column="31" selection-start-line="21" selection-start-column="31" selection-end-line="21" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/game_play.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="759">
-          <caret line="23" selection-start-line="23" selection-end-line="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/how_high.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="759">
-          <caret line="23" column="35" selection-start-line="23" selection-start-column="35" selection-end-line="23" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/kong_retreats.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="759">
-          <caret line="23" column="40" selection-start-line="23" selection-start-column="40" selection-end-line="23" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/long_introduction.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="858">
-          <caret line="26" column="37" selection-start-line="26" selection-start-column="37" selection-end-line="26" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_dies.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="759">
-          <caret line="23" column="38" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_wins.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="759">
-          <caret line="23" column="38" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/state_nop.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="693">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/attract.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="693">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/taking_break.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/mod.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="255" column="13" selection-start-line="255" selection-start-column="13" selection-end-line="255" selection-end-column="13" />
-          <folding>
-            <element signature="e#6637#6638#0" expanded="true" />
-            <element signature="e#6682#6683#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -657,27 +543,6 @@
             <element signature="e#461#462#0" expanded="true" />
             <element signature="e#493#494#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/main.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/common.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="62" selection-start-line="62" selection-end-line="62" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="763">
-          <caret line="31" lean-forward="true" selection-start-line="31" selection-end-line="31" />
         </state>
       </provider>
     </entry>
@@ -704,11 +569,169 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ripper/main.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="90" selection-start-line="90" selection-end-line="90" />
+        <state relative-caret-position="461">
+          <caret line="53" selection-start-line="53" selection-end-line="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/controller.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="804">
+          <caret line="320" column="1" lean-forward="true" selection-start-line="320" selection-start-column="1" selection-end-line="320" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/tiles.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="986">
+          <caret line="2579" selection-start-line="2579" selection-end-line="2579" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/tile_maps.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/common.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4975">
+          <caret line="48" selection-start-line="48" selection-end-line="48" />
           <folding>
-            <element signature="e#959#960#0" expanded="true" />
-            <element signature="e#989#990#0" expanded="true" />
+            <element signature="e#4217#4218#0" expanded="true" />
+            <element signature="e#4248#4249#0" expanded="true" />
+            <element signature="e#4610#4611#0" expanded="true" />
+            <element signature="e#4654#4655#0" expanded="true" />
+            <element signature="e#4927#4928#0" expanded="true" />
+            <element signature="e#4971#4972#0" expanded="true" />
+            <element signature="e#7427#7428#0" expanded="true" />
+            <element signature="e#7470#7471#0" expanded="true" />
+            <element signature="e#7699#7700#0" expanded="true" />
+            <element signature="e#7742#7743#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/game_play.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="99">
+          <caret line="3" column="33" lean-forward="true" selection-start-line="3" selection-start-column="33" selection-end-line="3" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/attract.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/how_high.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="693">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/kong_retreats.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="693">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_dies.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/player_wins.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="726">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/state_nop.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="627">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/boot.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+          <folding>
+            <element signature="e#533#534#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/long_introduction.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/main.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="298">
+          <caret line="23" column="4" selection-start-line="23" selection-start-column="4" selection-end-line="23" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/liballoc/boxed.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="474">
+          <caret line="903" column="5" lean-forward="true" selection-start-line="903" selection-start-column="5" selection-end-line="903" selection-end-column="5" />
+          <folding>
+            <element signature="e#26692#26693#0" expanded="true" />
+            <element signature="e#26718#26719#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/sdl.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="33">
+          <caret line="118" column="11" lean-forward="true" selection-start-line="118" selection-start-column="11" selection-end-line="118" selection-end-column="11" />
+          <folding>
+            <element signature="e#4432#4433#0" expanded="true" />
+            <element signature="e#4467#4468#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="496">
+          <caret line="56" selection-start-line="56" selection-end-line="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="81" column="35" selection-start-line="81" selection-start-column="35" selection-end-line="81" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/state_machine/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="235" column="8" selection-start-line="235" selection-start-column="8" selection-end-line="235" selection-end-column="8" />
+          <folding>
+            <element signature="e#7455#7456#0" expanded="true" />
+            <element signature="e#7500#7501#0" expanded="true" />
+            <element signature="e#7558#7559#0" expanded="true" />
+            <element signature="e#7611#7612#0" expanded="true" />
           </folding>
         </state>
       </provider>

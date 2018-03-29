@@ -16,101 +16,116 @@ mod level;
 mod player;
 mod state_machine;
 
-use sdl2;
+use std::cell::RefCell;
 
+use sdl2;
 use sdl2::Sdl;
+use sdl2::EventPump;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::render::WindowCanvas;
 use sdl2::controller::GameController;
 
+use self::video::TileMaps;
 use self::video::VideoGenerator;
-use self::state_machine::GameState;
 
-struct SystemInterfaces<'a> {
-    controller: GameController,
-    video: VideoGenerator<'a>,
-    game_state: GameState
+use self::state_machine::GameState;
+use self::state_machine::GameStates;
+
+pub struct SystemInterfaces {
+    context:    Option<Sdl>,
+    game_state: RefCell<GameState>,
+    event_pump: Option<RefCell<EventPump>>,
+    video_gen:  Option<RefCell<VideoGenerator>>,
+    controller: Option<RefCell<GameController>>,
 }
 
-fn controller_init(sdl_context: &Sdl) -> GameController {
-    let subsystem = sdl_context.game_controller().unwrap();
-
-    let available =
-        match subsystem.num_joysticks() {
-            Ok(n) => n,
-            Err(e) => {
-                error!("can't enumerate joysticks: {}", e);
-                panic!();
-            },
+impl SystemInterfaces {
+    pub fn new() -> SystemInterfaces {
+        let mut system = SystemInterfaces {
+            context:    None,
+            event_pump: None,
+            controller: None,
+            video_gen:  None,
+            game_state: RefCell::new(GameState::init()),
         };
+        system.init();
+        system
+    }
 
-    info!("{} joysticks available", available);
+    pub fn init(&mut self) {
+        self.context = Some(sdl2::init().unwrap());
+        self.event_pump = Some(RefCell::new(self.context.as_ref().unwrap().event_pump().unwrap()));
+        self.video_gen = Some(RefCell::new(VideoGenerator::init(self.context.as_ref().unwrap())));
+        self.controller_init();
+    }
 
-    let mut controller = None;
-
-    for id in 0..available {
-        if subsystem.is_game_controller(id) {
-            info!("Attempting to open controller {}", id);
-
-            match subsystem.open(id) {
-                Ok(c) => {
-                    info!("Success: opened \"{}\"", c.name());
-                    controller = Some(c);
-                    break;
-                },
-                Err(e) => {
-                    error!("failed: {:?}", e);
-                    panic!();
-                },
+    pub fn event_pump(&mut self) {
+        let mut event_pump = self.event_pump.as_ref().unwrap().borrow_mut();
+        'running: loop {
+            for event in event_pump.poll_iter() {
+                match event {
+                    Event::Quit { .. } | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+                        break 'running
+                    },
+                    _ => {}
+                }
             }
-        } else {
-            warn!("{} is not a game controller", id);
+            {
+                let game_state = self.game_state.borrow();
+                game_state.update(self);
+
+                let mut video_gen = self
+                    .video_gen
+                    .as_ref()
+                    .unwrap()
+                    .borrow_mut();
+                video_gen.update();
+            }
         }
     }
 
-    let controller =
-        match controller {
-            Some(c) => c,
-            None => {
-                error!("Couldn't open any controller");
-                panic!();
-            },
+    fn controller_init(&mut self) {
+        let subsystem = self.context
+            .as_ref()
+            .unwrap()
+            .game_controller()
+            .unwrap();
+        let available = match subsystem.num_joysticks() {
+            Ok(n) => n,
+            Err(_e) => 0
         };
+        self.controller = None;
+        for id in 0..available {
+            if subsystem.is_game_controller(id) {
+                info!("Attempting to open controller {}", id);
 
-    info!("Controller mapping: {}", controller.mapping());
+                match subsystem.open(id) {
+                    Ok(c) => {
+                        info!("Success: opened \"{}\"", c.name());
+                        self.controller = Some(RefCell::new(c));
+                        break;
+                    },
+                    Err(e) => {
+                        error!("failed: {:?}", e);
+                        panic!();
+                    },
+                }
+            } else {
+                warn!("{} is not a game controller", id);
+            }
+        }
+    }
 
-    return controller;
+    pub fn set_bg(&self, tile_map:TileMaps) {
+    }
+
+    pub fn transition_to(&self, state:GameStates) {
+        let mut game_state = self.game_state.borrow_mut();
+        game_state.transition_to(state);
+    }
 }
 
 pub fn game_run() {
-    use rusty_kong::video::video_update;
-
-    let context = sdl2::init().unwrap();
-    let mut system_interfaces = game_init(&context).unwrap();
-
-    let mut event_pump = context.event_pump().unwrap();
-    'running: loop {
-        for event in event_pump.poll_iter() {
-            match event {
-                Event::Quit { .. } | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
-                    break 'running
-                },
-                _ => {}
-            }
-        }
-        system_interfaces.game_state.update(&system_interfaces.controller);
-        video_update(&mut system_interfaces.video);
-    }
-}
-
-fn game_init(context:&Sdl) -> Result<SystemInterfaces, String> {
-    use self::state_machine::game_state_init;
-    use rusty_kong::video::video_init;
-
-    return Ok(SystemInterfaces {
-        game_state: game_state_init(),
-        video: video_init(&context),
-        controller: controller_init(&context),
-    });
+    let mut system_interfaces = SystemInterfaces::new();
+    system_interfaces.event_pump();
 }

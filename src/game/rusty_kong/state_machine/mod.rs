@@ -10,14 +10,39 @@
 //
 // --------------------------------------------------------------------------
 
-use std::convert::AsMut;
+mod boot;
+use self::boot::*;
+
+mod attract;
+use self::attract::*;
+
+mod long_introduction;
+use self::long_introduction::*;
+
+mod how_high;
+use self::how_high::*;
+
+mod game_play;
+use self::game_play::*;
+
+mod player_dies;
+use self::player_dies::*;
+
+mod player_wins;
+use self::player_wins::*;
+
+mod kong_retreats;
+use self::kong_retreats::*;
+
+mod state_nop;
+use self::state_nop::*;
+
+use super::SystemInterfaces;
+
 use std::cell::RefCell;
-use std::marker::Sync;
 use std::fmt::Error;
 use std::fmt::Display;
 use std::fmt::Formatter;
-
-use sdl2::controller::GameController;
 
 use super::level::Level;
 use super::player::JumpMan;
@@ -51,6 +76,7 @@ impl Display for GameStates {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Hash)]
 struct States {
     previous: GameStates,
     current: GameStates,
@@ -59,56 +85,62 @@ struct States {
 
 struct StateHandlers {
     state: GameStates,
-    enter: fn(&GameState),
-    leave: fn(&GameState),
     first_update: RefCell<bool>,
-    update: fn(&GameState, &GameController),
+    enter: fn(&SystemInterfaces),
+    leave: fn(&SystemInterfaces),
+    update: fn(&SystemInterfaces),
 }
 
 impl StateHandlers {
-    pub fn perform_enter(&self, game_state:&GameState) {
+    pub fn perform_enter(&self, system:&SystemInterfaces) {
         debug!("calling {}_enter.", self.state);
-        (self.enter)(game_state);
+        (self.enter)(system);
     }
 
-    pub fn perform_leave(&self, game_state:&GameState) {
+    pub fn perform_leave(&self, system:&SystemInterfaces) {
         debug!("calling {}_leave.", self.state);
-        (self.leave)(game_state);
+        (self.leave)(system);
         let mut first_update = self.first_update.borrow_mut();
         *first_update = true;
     }
 
     pub fn perform_update(
             &self,
-            game_state:&GameState,
-            controller:&GameController) {
+            system:&SystemInterfaces) {
         let mut first_update = self.first_update.borrow_mut();
         if *first_update {
             debug!("calling {}_update.", self.state);
             debug!("NOTE: only the first call is logged to avoid noise.");
             *first_update = false;
         }
-        (self.update)(game_state, controller);
+        (self.update)(system);
     }
 }
 
 pub struct GameState {
     level: Level,
     player: JumpMan,
-    states: States,
+    // this should be Rc<RefCell<States>>
+    states: RefCell<States>,
     handlers: Vec<StateHandlers>
 }
 
 impl GameState {
+    pub fn init() -> GameState {
+        let mut game_state = GameState::new();
+        game_state.transition_to(GameStates::Boot);
+        game_state
+    }
+
     pub fn new() -> GameState {
         GameState {
             level: Level::new(),
             player: JumpMan::new(),
-            states: States {
+            states: RefCell::new(States {
                 previous: GameStates::None,
                 current:  GameStates::None,
                 next:     GameStates::None
-            },
+            }),
             handlers: vec![
                 StateHandlers {
                     state: GameStates::None,
@@ -186,28 +218,39 @@ impl GameState {
     }
 
     fn is_pending_transition(&self) -> bool {
-        self.states.next != GameStates::None
+        let states = &self.states.borrow();
+        states.next != GameStates::None
     }
 
-    fn transition_states(&mut self) {
-        debug!("transition to: {}.", self.states.next);
-        self.states.previous = self.states.current;
-        self.states.current = self.states.next;
-        self.states.next = GameStates::None;
-        self.leave_previous();
-        self.enter_current();
+    fn transition_states(&self, system:&SystemInterfaces) {
+        {
+            let mut states = self.states.borrow_mut();
+            debug!("transition to: {}.", states.next);
+            states.previous = states.current;
+            states.current = states.next;
+            states.next = GameStates::None;
+        }
+        {
+            self.leave_previous(system);
+        }
+        {
+            self.enter_current(system);
+        }
     }
 
     fn next_handlers(&self) -> &StateHandlers {
-        self.handlers(self.states.next)
+        let states = self.states.borrow_mut();
+        self.handlers(states.next)
     }
 
     fn current_handlers(&self) -> &StateHandlers {
-        self.handlers(self.states.current)
+        let states = self.states.borrow_mut();
+        self.handlers(states.current)
     }
 
     fn previous_handlers(&self) -> &StateHandlers {
-        self.handlers(self.states.previous)
+        let states = self.states.borrow_mut();
+        self.handlers(states.previous)
     }
 
     fn handlers(&self, state: GameStates) -> &StateHandlers {
@@ -215,64 +258,29 @@ impl GameState {
     }
 
     pub fn transition_to(&mut self, state: GameStates) {
-        self.states.next = state;
+        self.states.borrow_mut().next = state;
     }
 
-    fn enter_current(&self) {
+    fn enter_current(&self, system: &SystemInterfaces) {
         let current_handlers = self.current_handlers();
-        current_handlers.perform_enter(self);
+        current_handlers.perform_enter(system);
     }
 
-    fn leave_previous(&self) {
+    fn leave_previous(&self, system: &SystemInterfaces) {
         let previous_handlers = self.previous_handlers();
-        previous_handlers.perform_leave(self);
+        previous_handlers.perform_leave(system);
     }
 
-    fn perform_update(&self, controller: &GameController) {
-        self.current_handlers().perform_update( self, controller);
+    fn perform_update(&self, system: &SystemInterfaces) {
+        self.current_handlers().perform_update(system);
     }
 
-    pub fn update(
-            &mut self,
-            controller:&GameController) {
+    pub fn update(&self, system: &SystemInterfaces) {
         if self.is_pending_transition() {
-            self.transition_states();
+            self.transition_states(system);
         } else {
-            self.perform_update(controller);
+            self.perform_update(system);
         }
     }
 
-}
-
-mod boot;
-use self::boot::*;
-
-mod attract;
-use self::attract::*;
-
-mod long_introduction;
-use self::long_introduction::*;
-
-mod how_high;
-use self::how_high::*;
-
-mod game_play;
-use self::game_play::*;
-
-mod player_dies;
-use self::player_dies::*;
-
-mod player_wins;
-use self::player_wins::*;
-
-mod kong_retreats;
-use self::kong_retreats::*;
-
-mod state_nop;
-use self::state_nop::*;
-
-pub fn game_state_init() -> GameState {
-    let mut game_state = GameState::new();
-    game_state.transition_to(GameStates::Boot);
-    game_state
 }

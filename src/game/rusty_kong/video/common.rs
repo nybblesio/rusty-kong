@@ -60,12 +60,8 @@ pub struct PaletteEntry {
     pub a: u8
 }
 
-#[derive(Copy, Clone)]
-pub struct TileMapEntry {
-    pub tile: u16,
-    pub flags: u8,
-    pub palette: u8,
-}
+#[derive(Copy, Clone, Hash, Eq, PartialEq)]
+pub struct TileMapEntry(pub u16, pub u8, pub u8);
 
 #[derive(Copy, Clone)]
 pub struct TileMap {
@@ -118,29 +114,29 @@ impl<'a> SpriteControlBlock {
         }
     }
 
-    pub fn update(self:&SpriteControlBlock) {
+    pub fn update(&mut self) {
         use super::palettes::get_palette;
         use super::sprites::get_sprite_bitmap;
 
     }
 
-    pub fn tile(self:&mut SpriteControlBlock, number:u16) {
+    pub fn tile(&mut self, number:u16) {
         self.tile = number;
     }
 
-    pub fn is_changed(self:&SpriteControlBlock) -> bool {
+    pub fn is_changed(&self) -> bool {
         self.flags & F_SPR_CHANGED != 0
     }
 
-    pub fn is_enabled(self:&SpriteControlBlock) -> bool {
+    pub fn is_enabled(&self) -> bool {
         self.flags & F_SPR_ENABLED != 0
     }
 
-    pub fn is_collided(self:&SpriteControlBlock) -> bool {
+    pub fn is_collided(&self) -> bool {
         self.flags & F_SPR_COLLIDED != 0
     }
 
-    pub fn enable(self:&mut SpriteControlBlock, flag:bool) {
+    pub fn enable(&mut self, flag:bool) {
         if flag {
             self.flags |= F_SPR_ENABLED;
         } else {
@@ -148,7 +144,7 @@ impl<'a> SpriteControlBlock {
         }
     }
 
-    pub fn changed(self:&mut SpriteControlBlock, flag:bool) {
+    pub fn changed(&mut self, flag:bool) {
         if flag {
             self.flags |= F_SPR_CHANGED;
         } else {
@@ -156,7 +152,7 @@ impl<'a> SpriteControlBlock {
         }
     }
 
-    pub fn collided(self:&mut SpriteControlBlock, flag:bool) {
+    pub fn collided(&mut self, flag:bool) {
         if flag {
             self.flags |= F_SPR_COLLIDED;
         } else {
@@ -164,20 +160,20 @@ impl<'a> SpriteControlBlock {
         }
     }
 
-    pub fn palette(self:&mut SpriteControlBlock, number:u8) {
+    pub fn palette(&mut self, number:u8) {
         self.palette = number;
     }
 
-    pub fn get_position(self:&SpriteControlBlock) -> (u16, u16) {
+    pub fn get_position(&self) -> (u16, u16) {
         (self.x, self.y)
     }
 
-    pub fn position(self:&mut SpriteControlBlock, x:u16, y:u16) {
+    pub fn position(&mut self, x:u16, y:u16) {
         self.x = x;
         self.y = y;
     }
 
-    pub fn vertical_flip(self:&mut SpriteControlBlock, flag:bool) {
+    pub fn vertical_flip(&mut self, flag:bool) {
         if flag {
             self.flags |= F_SPR_VFLIP;
         } else {
@@ -185,11 +181,11 @@ impl<'a> SpriteControlBlock {
         }
     }
 
-    pub fn is_vertically_flipped(self:&SpriteControlBlock) -> bool {
+    pub fn is_vertically_flipped(&self) -> bool {
         self.flags & F_SPR_VFLIP != 0
     }
 
-    pub fn horizontal_flip(self:&mut SpriteControlBlock, flag:bool) {
+    pub fn horizontal_flip(&mut self, flag:bool) {
         if flag {
             self.flags |= F_SPR_HFLIP;
         } else {
@@ -197,7 +193,7 @@ impl<'a> SpriteControlBlock {
         }
     }
 
-    pub fn is_horizontally_flipped(self:&SpriteControlBlock) -> bool {
+    pub fn is_horizontally_flipped(&self) -> bool {
         self.flags & F_SPR_HFLIP != 0
     }
 }
@@ -231,6 +227,25 @@ impl BackgroundControlTable {
         }
         table
     }
+
+    pub fn set(&mut self, tile_map:TileMaps) {
+        use super::tile_maps::INTRO_MAP;
+
+        match tile_map {
+            TileMaps::LongIntroduction => {
+                let mut index = 0;
+                for entry in INTRO_MAP.iter() {
+                    let mut block = self.table[index];
+                    block.tile(entry.0);
+                    block.palette(entry.1);
+                    index += 1;
+                }
+            }
+
+            _ => {
+            }
+        }
+    }
 }
 
 impl BackgroundControlBlock {
@@ -243,25 +258,25 @@ impl BackgroundControlBlock {
             user_data2: 0}
     }
 
-    pub fn update(self:&BackgroundControlBlock) {
+    pub fn update(&mut self) {
         use super::palettes::get_palette;
         use super::tiles::get_tile_bitmap;
 
     }
 
-    pub fn is_changed(self:&BackgroundControlBlock) -> bool {
+    pub fn is_changed(&self) -> bool {
         self.flags & F_BG_CHANGED != 0
     }
 
-    pub fn is_enabled(self:&BackgroundControlBlock) -> bool {
+    pub fn is_enabled(&self) -> bool {
         self.flags & F_BG_ENABLED != 0
     }
 
-    pub fn tile(self:&mut BackgroundControlBlock, number:u16) {
+    pub fn tile(&mut self, number:u16) {
         self.tile = number;
     }
 
-    pub fn changed(self:&mut BackgroundControlBlock, flag:bool) {
+    pub fn changed(&mut self, flag:bool) {
         if flag {
             self.flags |= F_BG_CHANGED;
         } else {
@@ -269,11 +284,11 @@ impl BackgroundControlBlock {
         }
     }
 
-    pub fn palette(self:&mut BackgroundControlBlock, number:u8) {
+    pub fn palette(&mut self, number:u8) {
         self.palette = number;
     }
 
-    pub fn enable(self:&mut BackgroundControlBlock, flag:bool) {
+    pub fn enable(&mut self, flag:bool) {
         if flag {
             self.flags |= F_BG_ENABLED;
         } else {
@@ -281,7 +296,7 @@ impl BackgroundControlBlock {
         }
     }
 
-    pub fn vertical_flip(self:&mut BackgroundControlBlock, flag:bool) {
+    pub fn vertical_flip(&mut self, flag:bool) {
         if flag {
             self.flags |= F_BG_VFLIP;
         } else {
@@ -289,11 +304,11 @@ impl BackgroundControlBlock {
         }
     }
 
-    pub fn is_vertically_flipped(self:&BackgroundControlBlock) -> bool {
+    pub fn is_vertically_flipped(&self) -> bool {
         self.flags & F_BG_VFLIP != 0
     }
 
-    pub fn horizontal_flip(self:&mut BackgroundControlBlock, flag:bool) {
+    pub fn horizontal_flip(&mut self, flag:bool) {
         if flag {
             self.flags |= F_BG_HFLIP;
         } else {
@@ -301,7 +316,7 @@ impl BackgroundControlBlock {
         }
     }
 
-    pub fn is_horizontally_flipped(self:&BackgroundControlBlock) -> bool {
+    pub fn is_horizontally_flipped(&self) -> bool {
         self.flags & F_BG_HFLIP != 0
     }
 }

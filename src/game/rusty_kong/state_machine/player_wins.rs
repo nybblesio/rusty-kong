@@ -10,17 +10,16 @@
 //
 // --------------------------------------------------------------------------
 
-use sdl2::controller::GameController;
-use super::GameState;
+use super::SystemInterfaces;
 
-pub fn player_wins_enter(game_state:&GameState) {
-
-}
-
-pub fn player_wins_leave(game_state:&GameState) {
+pub fn player_wins_enter(system:&SystemInterfaces) {
 
 }
 
-pub fn player_wins_update(game_state:&GameState, controller:&GameController) {
+pub fn player_wins_leave(system:&SystemInterfaces) {
+
+}
+
+pub fn player_wins_update(system:&SystemInterfaces) {
 
 }

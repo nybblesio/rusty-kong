@@ -10,20 +10,19 @@
 //
 // --------------------------------------------------------------------------
 
-use sdl2::controller::GameController;
-use super::GameState;
+use super::SystemInterfaces;
 
-pub fn long_intro_enter(game_state:&GameState) {
+pub fn long_intro_enter(system:&SystemInterfaces) {
     use super::super::video::TileMaps;
-    use super::super::video::video_set_bg;
 
-    video_set_bg(TileMaps::LongIntroduction);
+    info!("set bg1_cntl to long introduction tilemap.");
+    system.set_bg(TileMaps::LongIntroduction);
 }
 
-pub fn long_intro_leave(game_state:&GameState) {
+pub fn long_intro_leave(system:&SystemInterfaces) {
 
 }
 
-pub fn long_intro_update(game_state:&GameState, controller:&GameController) {
+pub fn long_intro_update(system:&SystemInterfaces) {
 
 }
