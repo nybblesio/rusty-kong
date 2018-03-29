@@ -37,12 +37,15 @@ use self::kong_retreats::*;
 mod state_nop;
 use self::state_nop::*;
 
+use super::TileMaps;
 use super::SystemInterfaces;
 
-use std::cell::RefCell;
+use std::rc::Rc;
 use std::fmt::Error;
 use std::fmt::Display;
+use std::cell::RefCell;
 use std::fmt::Formatter;
+use std::borrow::BorrowMut;
 
 use super::level::Level;
 use super::player::JumpMan;
@@ -76,211 +79,189 @@ impl Display for GameStates {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Hash)]
-struct States {
-    previous: GameStates,
-    current: GameStates,
-    next: GameStates,
-}
-
 struct StateHandlers {
     state: GameStates,
     first_update: RefCell<bool>,
-    enter: fn(&SystemInterfaces),
-    leave: fn(&SystemInterfaces),
-    update: fn(&SystemInterfaces),
+    enter: fn(&mut GameState),
+    leave: fn(&mut GameState),
+    update: fn(&mut GameState),
 }
 
 impl StateHandlers {
-    pub fn perform_enter(&self, system:&SystemInterfaces) {
+    pub fn perform_enter(&self, game_state:&mut GameState) {
         debug!("calling {}_enter.", self.state);
-        (self.enter)(system);
+        (self.enter)(game_state);
     }
 
-    pub fn perform_leave(&self, system:&SystemInterfaces) {
+    pub fn perform_leave(&self, game_state:&mut GameState) {
         debug!("calling {}_leave.", self.state);
-        (self.leave)(system);
+        (self.leave)(game_state);
         let mut first_update = self.first_update.borrow_mut();
         *first_update = true;
     }
 
-    pub fn perform_update(
-            &self,
-            system:&SystemInterfaces) {
+    pub fn perform_update(&self, game_state:&mut GameState) {
         let mut first_update = self.first_update.borrow_mut();
         if *first_update {
             debug!("calling {}_update.", self.state);
             debug!("NOTE: only the first call is logged to avoid noise.");
             *first_update = false;
         }
-        (self.update)(system);
+        (self.update)(game_state);
     }
 }
 
 pub struct GameState {
     level: Level,
     player: JumpMan,
-    // this should be Rc<RefCell<States>>
-    states: RefCell<States>,
-    handlers: Vec<StateHandlers>
+    next: GameStates,
+    current: GameStates,
+    previous: GameStates,
+    handlers: Vec<Rc<StateHandlers>>,
+    system: Option<Rc<RefCell<&'static SystemInterfaces>>>,
 }
 
 impl GameState {
-    pub fn init() -> GameState {
+    pub fn init(system:&'static SystemInterfaces) -> GameState {
         let mut game_state = GameState::new();
+        game_state.system(system);
         game_state.transition_to(GameStates::Boot);
         game_state
     }
 
     pub fn new() -> GameState {
         GameState {
-            level: Level::new(),
-            player: JumpMan::new(),
-            states: RefCell::new(States {
-                previous: GameStates::None,
-                current:  GameStates::None,
-                next:     GameStates::None
-            }),
+            system:   None,
+            level:    Level::new(),
+            player:   JumpMan::new(),
+            previous: GameStates::None,
+            current:  GameStates::None,
+            next:     GameStates::None,
             handlers: vec![
-                StateHandlers {
+                Rc::new(StateHandlers {
                     state: GameStates::None,
                     enter: state_nop_enter,
                     update: state_nop_update,
                     leave: state_nop_leave,
                     first_update: RefCell::new(true)
-                },
+                }),
 
-                StateHandlers {
+                Rc::new(StateHandlers {
                     state: GameStates::Boot,
                     enter: boot_enter,
                     update: boot_update,
                     leave: boot_leave,
                     first_update: RefCell::new(true)
-                },
+                }),
 
-                StateHandlers {
+                Rc::new(StateHandlers {
                     state: GameStates::Attract,
                     enter: attract_enter,
                     update: attract_update,
                     leave: attract_leave,
                     first_update: RefCell::new(true)
-                },
+                }),
 
-                StateHandlers {
+                Rc::new(StateHandlers {
                     state: GameStates::LongIntroduction,
                     enter: long_intro_enter,
                     update: long_intro_update,
                     leave: long_intro_leave,
                     first_update: RefCell::new(true)
-                },
+                }),
 
-                StateHandlers {
+                Rc::new(StateHandlers {
                     state: GameStates::HowHigh,
                     enter: how_high_enter,
                     update: how_high_update,
                     leave: how_high_leave,
                     first_update: RefCell::new(true)
-                },
+                }),
 
-                StateHandlers {
+                Rc::new(StateHandlers {
                     state: GameStates::GamePlay,
                     enter: game_play_enter,
                     update: game_play_update,
                     leave: game_play_leave,
                     first_update: RefCell::new(true)
-                },
+                }),
 
-                StateHandlers {
+                Rc::new(StateHandlers {
                     state: GameStates::PlayerDies,
                     enter: player_dies_enter,
                     update: player_dies_update,
                     leave: player_dies_leave,
                     first_update: RefCell::new(true)
-                },
+                }),
 
-                StateHandlers {
+                Rc::new(StateHandlers {
                     state: GameStates::PlayerWins,
                     enter: player_wins_enter,
                     update: player_wins_update,
                     leave: player_wins_leave,
                     first_update: RefCell::new(true)
-                },
+                }),
 
-                StateHandlers {
+                Rc::new(StateHandlers {
                     state: GameStates::KongRetreats,
                     enter: kong_retreats_enter,
                     update: kong_retreats_update,
                     leave: kong_retreats_leave,
                     first_update: RefCell::new(true)
-                },
+                }),
             ]
         }
     }
 
+    fn system(&mut self, system:&'static SystemInterfaces) {
+        let mut clone = self.system.as_ref().unwrap().clone();
+        let mut sys = (*clone).borrow_mut();
+        *sys = system;
+    }
+
     fn is_pending_transition(&self) -> bool {
-        let states = &self.states.borrow();
-        states.next != GameStates::None
+        self.next != GameStates::None
     }
 
-    fn transition_states(&self, system:&SystemInterfaces) {
-        {
-            let mut states = self.states.borrow_mut();
-            debug!("transition to: {}.", states.next);
-            states.previous = states.current;
-            states.current = states.next;
-            states.next = GameStates::None;
-        }
-        {
-            self.leave_previous(system);
-        }
-        {
-            self.enter_current(system);
-        }
-    }
-
-    fn next_handlers(&self) -> &StateHandlers {
-        let states = self.states.borrow_mut();
-        self.handlers(states.next)
-    }
-
-    fn current_handlers(&self) -> &StateHandlers {
-        let states = self.states.borrow_mut();
-        self.handlers(states.current)
-    }
-
-    fn previous_handlers(&self) -> &StateHandlers {
-        let states = self.states.borrow_mut();
-        self.handlers(states.previous)
-    }
-
-    fn handlers(&self, state: GameStates) -> &StateHandlers {
-        &self.handlers[state as usize]
+    fn transition_states(&mut self) {
+        debug!("transition to: {}.", self.next);
+        self.previous = self.current;
+        self.current = self.next;
+        self.next = GameStates::None;
+        self.leave_previous();
+        self.enter_current();
     }
 
     pub fn transition_to(&mut self, state: GameStates) {
-        self.states.borrow_mut().next = state;
+        self.next = state;
     }
 
-    fn enter_current(&self, system: &SystemInterfaces) {
-        let current_handlers = self.current_handlers();
-        current_handlers.perform_enter(system);
+    fn enter_current(&mut self) {
+        let handlers = self.handlers[self.current as usize].clone();
+        handlers.perform_enter(self);
     }
 
-    fn leave_previous(&self, system: &SystemInterfaces) {
-        let previous_handlers = self.previous_handlers();
-        previous_handlers.perform_leave(system);
+    fn leave_previous(&mut self) {
+        let handlers = self.handlers[self.previous as usize].clone();
+        handlers.perform_leave(self);
     }
 
-    fn perform_update(&self, system: &SystemInterfaces) {
-        self.current_handlers().perform_update(system);
+    fn update_current(&mut self) {
+        let handlers = self.handlers[self.current as usize].clone();
+        handlers.perform_update(self);
     }
 
-    pub fn update(&self, system: &SystemInterfaces) {
+    pub fn update(&mut self) {
         if self.is_pending_transition() {
-            self.transition_states(system);
+            self.transition_states();
         } else {
-            self.perform_update(system);
+            self.update_current();
         }
     }
 
+    pub fn set_bg(&mut self, tile_map:TileMaps) {
+        let mut clone = self.system.as_ref().unwrap().clone();
+        let sys = clone.borrow_mut();
+        //let mut video_gen = sys.video_gen.as_ref().unwrap().clone();
+    }
 }

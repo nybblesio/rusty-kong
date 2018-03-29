@@ -10,16 +10,16 @@
 //
 // --------------------------------------------------------------------------
 
-use super::SystemInterfaces;
+use super::GameState;
 
-pub fn player_wins_enter(system:&SystemInterfaces) {
-
-}
-
-pub fn player_wins_leave(system:&SystemInterfaces) {
+pub fn player_wins_enter(game_state:&mut GameState) {
 
 }
 
-pub fn player_wins_update(system:&SystemInterfaces) {
+pub fn player_wins_leave(game_state:&mut GameState) {
+
+}
+
+pub fn player_wins_update(game_state:&mut GameState) {
 
 }

@@ -16,7 +16,10 @@ mod level;
 mod player;
 mod state_machine;
 
+use std::rc::Rc;
+use std::ops::DerefMut;
 use std::cell::RefCell;
+use std::borrow::BorrowMut;
 
 use sdl2;
 use sdl2::Sdl;
@@ -33,10 +36,10 @@ use self::state_machine::GameStates;
 
 pub struct SystemInterfaces {
     context:    Option<Sdl>,
-    game_state: RefCell<GameState>,
-    event_pump: Option<RefCell<EventPump>>,
-    video_gen:  Option<RefCell<VideoGenerator>>,
-    controller: Option<RefCell<GameController>>,
+    game_state: Option<Rc<RefCell<GameState>>>,
+    event_pump: Option<Rc<RefCell<EventPump>>>,
+    video_gen:  Option<Rc<RefCell<VideoGenerator>>>,
+    controller: Option<Rc<RefCell<GameController>>>,
 }
 
 impl SystemInterfaces {
@@ -46,7 +49,7 @@ impl SystemInterfaces {
             event_pump: None,
             controller: None,
             video_gen:  None,
-            game_state: RefCell::new(GameState::init()),
+            game_state: None,
         };
         system.init();
         system
@@ -54,13 +57,15 @@ impl SystemInterfaces {
 
     pub fn init(&mut self) {
         self.context = Some(sdl2::init().unwrap());
-        self.event_pump = Some(RefCell::new(self.context.as_ref().unwrap().event_pump().unwrap()));
-        self.video_gen = Some(RefCell::new(VideoGenerator::init(self.context.as_ref().unwrap())));
+        self.game_state = Some(Rc::new(RefCell::new(GameState::init(self))));
+        self.event_pump = Some(Rc::new(RefCell::new(self.context.as_ref().unwrap().event_pump().unwrap())));
+        self.video_gen = Some(Rc::new(RefCell::new(VideoGenerator::init(self.context.as_ref().unwrap()))));
         self.controller_init();
     }
 
     pub fn event_pump(&mut self) {
-        let mut event_pump = self.event_pump.as_ref().unwrap().borrow_mut();
+        let mut clone = self.event_pump.as_ref().unwrap().clone();
+        let mut event_pump = (*clone).borrow_mut();
         'running: loop {
             for event in event_pump.poll_iter() {
                 match event {
@@ -71,14 +76,13 @@ impl SystemInterfaces {
                 }
             }
             {
-                let game_state = self.game_state.borrow();
-                game_state.update(self);
-
-                let mut video_gen = self
-                    .video_gen
-                    .as_ref()
-                    .unwrap()
-                    .borrow_mut();
+                let mut clone = self.game_state.as_ref().unwrap().clone();
+                let mut game_state = (*clone).borrow_mut();
+                game_state.update();
+            }
+            {
+                let mut clone = self.video_gen.as_ref().unwrap().clone();
+                let mut video_gen = (*clone).borrow_mut();
                 video_gen.update();
             }
         }
@@ -102,7 +106,7 @@ impl SystemInterfaces {
                 match subsystem.open(id) {
                     Ok(c) => {
                         info!("Success: opened \"{}\"", c.name());
-                        self.controller = Some(RefCell::new(c));
+                        self.controller = Some(Rc::new(RefCell::new(c)));
                         break;
                     },
                     Err(e) => {
@@ -114,14 +118,6 @@ impl SystemInterfaces {
                 warn!("{} is not a game controller", id);
             }
         }
-    }
-
-    pub fn set_bg(&self, tile_map:TileMaps) {
-    }
-
-    pub fn transition_to(&self, state:GameStates) {
-        let mut game_state = self.game_state.borrow_mut();
-        game_state.transition_to(state);
     }
 }
 
