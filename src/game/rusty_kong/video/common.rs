@@ -256,6 +256,36 @@ impl BackgroundControlTable {
                     for i in 0..64 {
                         pixels[i] = tile_bitmap[i] + palette_offset;
                     }
+
+                    if block.is_horizontally_flipped() {
+                        let mut sx = 7;
+                        let mut sy = 0;
+                        for y in 0..8 {
+                            for x in 0..4 {
+                                let temp = pixels[y * 8 + x];
+                                pixels[y * 8 + x] = pixels[sy * 8 + sx];
+                                pixels[sy * 8 + sx] = temp;
+                                sx -= 1;
+                            }
+                            sx = 7;
+                            sy += 1;
+                        }
+                    }
+
+                    if block.is_vertically_flipped() {
+                        let mut sx = 0;
+                        let mut sy = 7;
+                        for y in 0..4 {
+                            for x in 0..8 {
+                                let temp = pixels[y * 8 + x];
+                                pixels[y * 8 + x] = pixels[sy * 8 + sx];
+                                pixels[sy * 8 + sx] = temp;
+                                sx += 1
+                            }
+                            sx = 0;
+                            sy -= 1;
+                        }
+                    }
                 });
                 block.changed(false);
                 surface.blit(None, bg_surface, tile_rect);
@@ -281,6 +311,8 @@ impl BackgroundControlTable {
                     block.enable(true);
                     block.tile(entry.0);
                     block.palette(entry.1);
+                    block.vertical_flip(entry.2 & F_BG_VFLIP != 0);
+                    block.horizontal_flip(entry.2 & F_BG_HFLIP != 0);
                     index += 1;
                 }
             }
