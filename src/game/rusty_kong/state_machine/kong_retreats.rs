@@ -10,16 +10,16 @@
 //
 // --------------------------------------------------------------------------
 
-use super::GameState;
+use super::GameStateContext;
 
-pub fn kong_retreats_enter(game_state:&mut GameState) {
-
-}
-
-pub fn kong_retreats_leave(game_state:&mut GameState) {
+pub fn kong_retreats_enter(context:&GameStateContext) {
 
 }
 
-pub fn kong_retreats_update(game_state:&mut GameState) {
+pub fn kong_retreats_leave(context:&GameStateContext) {
+
+}
+
+pub fn kong_retreats_update(context:&GameStateContext) {
 
 }

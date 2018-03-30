@@ -37,15 +37,18 @@ use self::kong_retreats::*;
 mod state_nop;
 use self::state_nop::*;
 
+mod commands;
+use self::commands::*;
+
 use super::TileMaps;
 use super::SystemInterfaces;
 
 use std::rc::Rc;
+use std::boxed::Box;
 use std::fmt::Error;
 use std::fmt::Display;
 use std::cell::RefCell;
 use std::fmt::Formatter;
-use std::borrow::BorrowMut;
 
 use super::level::Level;
 use super::player::JumpMan;
@@ -82,32 +85,59 @@ impl Display for GameStates {
 struct StateHandlers {
     state: GameStates,
     first_update: RefCell<bool>,
-    enter: fn(&mut GameState),
-    leave: fn(&mut GameState),
-    update: fn(&mut GameState),
+    enter: fn(&GameStateContext),
+    leave: fn(&GameStateContext),
+    update: fn(&GameStateContext),
 }
 
 impl StateHandlers {
-    pub fn perform_enter(&self, game_state:&mut GameState) {
+    pub fn perform_enter(&self, context:&GameStateContext) {
         debug!("calling {}_enter.", self.state);
-        (self.enter)(game_state);
+        (self.enter)(context);
     }
 
-    pub fn perform_leave(&self, game_state:&mut GameState) {
+    pub fn perform_leave(&self, context:&GameStateContext) {
         debug!("calling {}_leave.", self.state);
-        (self.leave)(game_state);
+        (self.leave)(context);
         let mut first_update = self.first_update.borrow_mut();
         *first_update = true;
     }
 
-    pub fn perform_update(&self, game_state:&mut GameState) {
+    pub fn perform_update(&self, context:&GameStateContext) {
         let mut first_update = self.first_update.borrow_mut();
         if *first_update {
             debug!("calling {}_update.", self.state);
             debug!("NOTE: only the first call is logged to avoid noise.");
             *first_update = false;
         }
-        (self.update)(game_state);
+        (self.update)(context);
+    }
+}
+
+pub struct GameStateContext {
+    commands: RefCell<Vec<Box<GameCommand>>>
+}
+
+impl GameStateContext {
+    pub fn new() -> GameStateContext {
+        GameStateContext { commands: RefCell::new(vec![]) }
+    }
+
+    pub fn set_bg(&self, tile_map:TileMaps) {
+        let mut commands = self.commands.borrow_mut();
+        commands.push(Box::new(SetBackgroundGameCommand::new(Some(tile_map))));
+    }
+
+    pub fn transition_to(&self, new_state: GameStates) {
+        let mut commands = self.commands.borrow_mut();
+        commands.push(Box::new(TransitionToGameCommand::new(new_state)));
+    }
+
+    pub fn process(&self, game_state: &mut GameState, system: &mut SystemInterfaces) {
+        let mut commands = self.commands.borrow_mut();
+        for command in commands.iter_mut() {
+            command.execute(game_state, system);
+        }
     }
 }
 
@@ -214,47 +244,39 @@ impl GameState {
         self.next != GameStates::None
     }
 
-    fn transition_states(&mut self) {
+    fn transition_states(&mut self, context: &GameStateContext) {
         debug!("transition to: {}.", self.next);
         self.previous = self.current;
         self.current = self.next;
         self.next = GameStates::None;
-        self.leave_previous();
-        self.enter_current();
+        self.leave_previous(context);
+        self.enter_current(context);
     }
 
     pub fn transition_to(&mut self, state: GameStates) {
         self.next = state;
     }
 
-    fn enter_current(&mut self) {
+    fn enter_current(&self, context: &GameStateContext) {
         let handlers = self.handlers[self.current as usize].clone();
-        handlers.perform_enter(self);
+        handlers.perform_enter(context);
     }
 
-    fn leave_previous(&mut self) {
+    fn leave_previous(&self, context: &GameStateContext) {
         let handlers = self.handlers[self.previous as usize].clone();
-        handlers.perform_leave(self);
+        handlers.perform_leave(context);
     }
 
-    fn update_current(&mut self) {
+    fn update_current(&self, context: &GameStateContext) {
         let handlers = self.handlers[self.current as usize].clone();
-        handlers.perform_update(self);
+        handlers.perform_update(context);
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, context: &GameStateContext) {
         if self.is_pending_transition() {
-            self.transition_states();
+            self.transition_states(context);
         } else {
-            self.update_current();
+            self.update_current(context);
         }
-    }
-
-    pub fn set_bg(&mut self, tile_map:TileMaps) {
-//        let clone = self.system.as_ref().unwrap().clone();
-//        let sys = (*clone).borrow_mut();
-//        let vg_clone = sys.video_gen.as_ref().unwrap().clone();
-//        let mut video_gen = (*vg_clone).borrow_mut();
-//        video_gen.set_bg(tile_map);
     }
 }

@@ -10,13 +10,13 @@
 //
 // --------------------------------------------------------------------------
 
-use super::GameState;
+use super::GameStateContext;
 
-pub fn attract_enter(game_state:&mut GameState) {
+pub fn attract_enter(context:&GameStateContext) {
 }
 
-pub fn attract_leave(game_state:&mut GameState) {
+pub fn attract_leave(context:&GameStateContext) {
 }
 
-pub fn attract_update(game_state:&mut GameState) {
+pub fn attract_update(context:&GameStateContext) {
 }

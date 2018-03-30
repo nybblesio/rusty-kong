@@ -10,19 +10,19 @@
 //
 // --------------------------------------------------------------------------
 
-use super::GameState;
+use super::GameStateContext;
 
-pub fn long_intro_enter(game_state:&mut GameState) {
+pub fn long_intro_enter(context:&GameStateContext) {
     use super::super::video::TileMaps;
 
     info!("set bg1_cntl to long introduction tilemap.");
-    game_state.set_bg(TileMaps::LongIntroduction);
+    context.set_bg(TileMaps::LongIntroduction);
 }
 
-pub fn long_intro_leave(game_state:&mut GameState) {
+pub fn long_intro_leave(context:&GameStateContext) {
 
 }
 
-pub fn long_intro_update(game_state:&mut GameState) {
+pub fn long_intro_update(context:&GameStateContext) {
 
 }

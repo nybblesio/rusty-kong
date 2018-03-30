@@ -17,6 +17,7 @@ mod player;
 mod state_machine;
 
 use std::rc::Rc;
+use std::ops::DerefMut;
 use std::cell::RefCell;
 use std::borrow::BorrowMut;
 
@@ -31,6 +32,7 @@ use self::video::TileMaps;
 use self::video::VideoGenerator;
 
 use self::state_machine::GameState;
+use self::state_machine::GameStateContext;
 
 pub struct SystemInterfaces {
     context:    Option<Sdl>,
@@ -79,7 +81,11 @@ impl SystemInterfaces {
             {
                 let clone = self.game_state.as_ref().unwrap().clone();
                 let mut game_state = (*clone).borrow_mut();
-                game_state.update();
+                let game_state_context = GameStateContext::new();
+                game_state.update(&game_state_context);
+                game_state_context.process(
+                    game_state.deref_mut(),
+                    self);
             }
             {
                 let clone = self.video_gen.as_ref().unwrap().clone();

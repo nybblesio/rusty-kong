@@ -42,6 +42,7 @@ pub const F_BG_HFLIP:    u8 = 0b00000010;
 pub const F_BG_VFLIP:    u8 = 0b00000100;
 pub const F_BG_CHANGED:  u8 = 0b00001000;
 
+#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Hash)]
 pub enum TileMaps {
     LongIntroduction,
     Level1,
