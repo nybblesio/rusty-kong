@@ -19,12 +19,12 @@ mod state_machine;
 use std::rc::Rc;
 use std::ops::DerefMut;
 use std::cell::RefCell;
-use std::borrow::BorrowMut;
 
 use sdl2;
 use sdl2::Sdl;
 use sdl2::EventPump;
 use sdl2::event::Event;
+use sdl2::TimerSubsystem;
 use sdl2::keyboard::Keycode;
 use sdl2::controller::GameController;
 
@@ -38,6 +38,7 @@ pub struct SystemInterfaces {
     context:    Option<Sdl>,
     game_state: Option<Rc<RefCell<GameState>>>,
     event_pump: Option<Rc<RefCell<EventPump>>>,
+    timer:      Option<Rc<RefCell<TimerSubsystem>>>,
     video_gen:  Option<Rc<RefCell<VideoGenerator>>>,
     controller: Option<Rc<RefCell<GameController>>>,
 }
@@ -45,6 +46,7 @@ pub struct SystemInterfaces {
 impl SystemInterfaces {
     pub fn new() -> SystemInterfaces {
         let mut system = SystemInterfaces {
+            timer:      None,
             context:    None,
             event_pump: None,
             controller: None,
@@ -57,6 +59,8 @@ impl SystemInterfaces {
 
     pub fn init(&mut self) {
         self.context = Some(sdl2::init().unwrap());
+        self.timer = Some(Rc::new(
+            RefCell::new(self.context.as_ref().unwrap().timer().unwrap())));
         self.game_state = Some(Rc::new(
             RefCell::new(GameState::init())));
         self.event_pump = Some(Rc::new(
@@ -90,7 +94,11 @@ impl SystemInterfaces {
             {
                 let clone = self.video_gen.as_ref().unwrap().clone();
                 let mut video_gen = (*clone).borrow_mut();
-                video_gen.update();
+
+                let timer_clone = self.timer.as_ref().unwrap().clone();
+                let mut timer = (*timer_clone).borrow_mut();
+
+                video_gen.update(timer.deref_mut());
             }
         }
     }
