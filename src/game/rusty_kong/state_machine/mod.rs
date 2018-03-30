@@ -128,6 +128,11 @@ impl GameStateContext {
         commands.push(Box::new(SetBackgroundGameCommand::new(Some(tile_map))));
     }
 
+    pub fn sprite(&self, number:u8, x:u16, y:u16, tile:u16, palette:u8, flags:u8) {
+        let mut commands = self.commands.borrow_mut();
+        commands.push(Box::new(SpriteGameCommand::new(number, x, y, tile, palette, flags)));
+    }
+
     pub fn transition_to(&self, new_state: GameStates) {
         let mut commands = self.commands.borrow_mut();
         commands.push(Box::new(TransitionToGameCommand::new(new_state)));

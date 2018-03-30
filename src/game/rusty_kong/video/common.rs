@@ -18,7 +18,10 @@ use super::sprites::get_sprite_bitmap;
 use super::palettes::get_palette_colors;
 
 use sdl2::rect::Rect;
+use sdl2::pixels::Color;
 use sdl2::surface::Surface;
+use sdl2::render::WindowCanvas;
+use sdl2::render::TextureCreator;
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::pixels::Palette as SdlPalette;
 
@@ -104,13 +107,82 @@ impl SpriteControlTable {
                 16,
                 PixelFormatEnum::Index8).unwrap();
             let palette = SdlPalette::with_colors(&get_palette_colors()).unwrap();
+            surface.enable_RLE();
             surface.set_palette(&palette);
+            surface.set_color_key(true, Color::RGBA(0, 0, 0, 0xff));
             table.surfaces.push(RefCell::new(surface));
         }
         table
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, canvas:&mut WindowCanvas) {
+        let mut sprite_number:usize = 0;
+        let mut texture_creator = canvas.texture_creator();
+
+        for block in self.table.iter_mut() {
+            let mut surface = self.surfaces[sprite_number].borrow_mut();
+            if block.is_changed() {
+                let spr_bitmap = get_sprite_bitmap(block.tile);
+                let palette_offset = block.palette * 4;
+                surface.with_lock_mut(|pixels: &mut [u8]| {
+                    for i in 0..256 {
+                        pixels[i] = spr_bitmap[i] + palette_offset;
+                    }
+
+                    if block.is_horizontally_flipped() {
+                        let mut sx = 15;
+                        let mut sy = 0;
+                        for y in 0..16 {
+                            for x in 0..8 {
+                                let temp = pixels[y * 16 + x];
+                                pixels[y * 16 + x] = pixels[sy * 16 + sx];
+                                pixels[sy * 16 + sx] = temp;
+                                sx -= 1;
+                            }
+                            sx = 15;
+                            sy += 1;
+                        }
+                    }
+
+                    if block.is_vertically_flipped() {
+                        let mut sx = 0;
+                        let mut sy = 15;
+                        for y in 0..8 {
+                            for x in 0..16 {
+                                let temp = pixels[y * 16 + x];
+                                pixels[y * 16 + x] = pixels[sy * 16 + sx];
+                                pixels[sy * 16 + sx] = temp;
+                                sx += 1
+                            }
+                            sx = 0;
+                            sy -= 1;
+                        }
+                    }
+                });
+                block.changed(false);
+            }
+
+            if block.is_enabled() {
+                let sprite_texture = texture_creator
+                    .create_texture_from_surface(&*surface)
+                    .unwrap();
+                canvas.copy(
+                    &sprite_texture,
+                    None,
+                    Rect::new(block.x as i32, block.y as i32, 16 * 4, 16 * 4));
+            }
+
+            sprite_number += 1;
+        }
+    }
+
+    pub fn sprite(&mut self, number:u8, x:u16, y:u16, tile:u16, palette:u8, flags:u8) {
+        let mut block= &mut self.table[number as usize];
+        block.x = x;
+        block.y = y;
+        block.tile = tile;
+        block.palette = palette;
+        block.flags = flags | F_SPR_CHANGED;
     }
 }
 
@@ -125,12 +197,6 @@ impl<'a> SpriteControlBlock {
             user_data1: 0,
             user_data2: 0,
         }
-    }
-
-    pub fn update(&mut self) {
-        use super::palettes::get_palette;
-        use super::sprites::get_sprite_bitmap;
-
     }
 
     pub fn tile(&mut self, number:u16) {

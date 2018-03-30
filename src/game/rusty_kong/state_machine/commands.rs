@@ -63,3 +63,31 @@ impl GameCommand for SetBackgroundGameCommand {
         video_gen.set_bg(tile_map);
     }
 }
+
+// --------------------------------------------------------------------------
+//
+// sprite
+//
+// --------------------------------------------------------------------------
+pub struct SpriteGameCommand {
+    x: u16,
+    y: u16,
+    tile: u16,
+    flags: u8,
+    number: u8,
+    palette: u8,
+}
+
+impl SpriteGameCommand {
+    pub fn new(number:u8, x:u16, y:u16, tile:u16, palette:u8, flags:u8) -> SpriteGameCommand {
+        SpriteGameCommand { number, x, y, tile, palette, flags }
+    }
+}
+
+impl GameCommand for SpriteGameCommand {
+    fn execute(&self, game_state:&mut GameState, system:&mut SystemInterfaces) {
+        let clone = system.video_gen.as_ref().unwrap().clone();
+        let mut video_gen = (*clone).borrow_mut();
+        video_gen.sprite(self.number, self.x, self.y, self.tile, self.palette, self.flags);
+    }
+}

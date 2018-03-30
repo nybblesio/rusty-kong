@@ -10,8 +10,10 @@
 //
 // --------------------------------------------------------------------------
 
-mod common;
+pub mod common;
 use self::common::*;
+
+pub use self::common::F_SPR_ENABLED;
 pub use self::common::TileMaps;
 
 mod palettes;
@@ -27,11 +29,11 @@ use self::tiles::get_tile_bitmap;
 mod tile_maps;
 
 use sdl2::Sdl;
-use sdl2::pixels::Palette as SdlPalette;
 use sdl2::pixels::Color;
 use sdl2::surface::Surface;
 use sdl2::render::WindowCanvas;
 use sdl2::pixels::PixelFormatEnum;
+use sdl2::pixels::Palette as SdlPalette;
 
 pub struct VideoGenerator {
     canvas: WindowCanvas,
@@ -82,8 +84,12 @@ impl VideoGenerator {
             Err(s) => error!("canvas copy failed: {}", s),
             _      => {},
         };
-        self.spr_cntl.update();
+        self.spr_cntl.update(&mut self.canvas);
         self.canvas.present();
+    }
+
+    pub fn sprite(&mut self, number:u8, x:u16, y:u16, tile:u16, palette:u8, flags:u8) {
+        self.spr_cntl.sprite(number, x, y, tile, palette, flags);
     }
 
     pub fn set_bg(&mut self, tile_map:TileMaps) {

@@ -12,7 +12,7 @@
 
 use super::common::*;
 
-pub fn get_sprite_bitmap<'a>(number:u8) -> &'a [u8; (SPRITE_WIDTH*SPRITE_HEIGHT) as usize] {
+pub fn get_sprite_bitmap<'a>(number:u16) -> &'a [u8; (SPRITE_WIDTH*SPRITE_HEIGHT) as usize] {
     &SPRITE_BITMAPS[number as usize]
 }
 
