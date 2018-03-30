@@ -16,6 +16,7 @@ pub use self::common::TileMaps;
 
 mod palettes;
 use self::palettes::get_palette;
+use self::palettes::get_palette_colors;
 
 mod sprites;
 use self::sprites::get_sprite_bitmap;
@@ -26,6 +27,8 @@ use self::tiles::get_tile_bitmap;
 mod tile_maps;
 
 use sdl2::Sdl;
+use sdl2::pixels::Palette as SdlPalette;
+use sdl2::pixels::Color;
 use sdl2::surface::Surface;
 use sdl2::render::WindowCanvas;
 use sdl2::pixels::PixelFormatEnum;
@@ -50,8 +53,13 @@ impl VideoGenerator {
             .present_vsync()
             .build()
             .unwrap();
-        let bg_surface = Surface::new(256, 256, PixelFormatEnum::Index8)
+
+        let mut bg_surface = Surface::new(256, 256, PixelFormatEnum::Index8)
             .unwrap();
+
+        let palette = SdlPalette::with_colors(&get_palette_colors()).unwrap();
+        bg_surface.set_palette(&palette);
+
         VideoGenerator {
             canvas,
             bg_surface,
@@ -61,6 +69,20 @@ impl VideoGenerator {
     }
 
     pub fn update(&mut self) {
+        self.bg1_cntl.update(&mut self.bg_surface);
+        let texture_creator = self.canvas.texture_creator();
+        let texture = match texture_creator.create_texture_from_surface(&self.bg_surface) {
+            Ok(t)  => t,
+            Err(s) =>  {
+                error!("create_texture_from_surface failed: {}", s);
+                panic!();
+            }
+        };
+        match self.canvas.copy(&texture, None, None) {
+            Err(s) => error!("canvas copy failed: {}", s),
+            _      => {},
+        };
+        self.spr_cntl.update();
         self.canvas.present();
     }
 

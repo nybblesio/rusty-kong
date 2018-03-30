@@ -10,10 +10,17 @@
 //
 // --------------------------------------------------------------------------
 
+use std::cell::RefCell;
 use std::option::Option;
 
+use super::tiles::get_tile_bitmap;
+use super::sprites::get_sprite_bitmap;
+use super::palettes::get_palette_colors;
+
+use sdl2::rect::Rect;
 use sdl2::surface::Surface;
 use sdl2::pixels::PixelFormatEnum;
+use sdl2::pixels::Palette as SdlPalette;
 
 pub const SCREEN_WIDTH:  u32 = 256;
 pub const SCREEN_HEIGHT: u32 = 256;
@@ -82,7 +89,7 @@ pub struct SpriteControlBlock {
 
 pub struct SpriteControlTable {
     table: [SpriteControlBlock; SPRITE_MAX as usize],
-    surfaces: Vec<Option<Surface<'static>>>
+    surfaces: Vec<RefCell<Surface<'static>>>
 }
 
 impl SpriteControlTable {
@@ -92,13 +99,18 @@ impl SpriteControlTable {
             table: [SpriteControlBlock::new_empty(); SPRITE_MAX as usize],
         };
         for _i in 0..SPRITE_MAX {
-            let surface = Surface::new(
+            let mut surface = Surface::new(
                 16,
                 16,
                 PixelFormatEnum::Index8).unwrap();
-            table.surfaces.push(Some(surface));
+            let palette = SdlPalette::with_colors(&get_palette_colors()).unwrap();
+            surface.set_palette(&palette);
+            table.surfaces.push(RefCell::new(surface));
         }
         table
+    }
+
+    pub fn update(&mut self) {
     }
 }
 
@@ -210,7 +222,7 @@ pub struct BackgroundControlBlock {
 
 pub struct BackgroundControlTable {
     table: [BackgroundControlBlock; TILE_CNTL_MAX as usize],
-    surfaces: Vec<Option<Surface<'static>>>
+    surfaces: Vec<RefCell<Surface<'static>>>
 }
 
 impl BackgroundControlTable {
@@ -220,13 +232,42 @@ impl BackgroundControlTable {
             table: [BackgroundControlBlock::new_empty(); TILE_CNTL_MAX as usize],
         };
         for _i in 0..TILE_CNTL_MAX {
-            let surface = Surface::new(
+            let mut surface = Surface::new(
                 8,
                 8,
                 PixelFormatEnum::Index8).unwrap();
-            table.surfaces.push(Some(surface));
+            let palette = SdlPalette::with_colors(&get_palette_colors()).unwrap();
+            surface.set_palette(&palette);
+            table.surfaces.push(RefCell::new(surface));
         }
         table
+    }
+
+    pub fn update(&mut self, bg_surface:&mut Surface) {
+        let mut block_number:usize = 0;
+        let mut tile_rect = Rect::new(0, 0, 8, 8);
+
+        for block in self.table.iter_mut() {
+            if block.is_changed() && block.is_enabled() {
+                let tile_bitmap = get_tile_bitmap(block.tile);
+                let mut surface = self.surfaces[block_number].borrow_mut();
+                let palette_offset = block.palette * 4;
+                surface.with_lock_mut(|pixels: &mut [u8]| {
+                    for i in 0..64 {
+                        pixels[i] = tile_bitmap[i] + palette_offset;
+                    }
+                });
+                block.changed(false);
+                surface.blit(None, bg_surface, tile_rect);
+            }
+
+            tile_rect.offset(8, 0);
+            if tile_rect.x() == 256 {
+                tile_rect.offset(-256, 8);
+            }
+
+            block_number += 1;
+        }
     }
 
     pub fn set(&mut self, tile_map:TileMaps) {
@@ -236,7 +277,8 @@ impl BackgroundControlTable {
             TileMaps::LongIntroduction => {
                 let mut index = 0;
                 for entry in INTRO_MAP.iter() {
-                    let mut block = self.table[index];
+                    let mut block = &mut self.table[index];
+                    block.enable(true);
                     block.tile(entry.0);
                     block.palette(entry.1);
                     index += 1;
@@ -259,12 +301,6 @@ impl BackgroundControlBlock {
             user_data2: 0}
     }
 
-    pub fn update(&mut self) {
-        use super::palettes::get_palette;
-        use super::tiles::get_tile_bitmap;
-
-    }
-
     pub fn is_changed(&self) -> bool {
         self.flags & F_BG_CHANGED != 0
     }
@@ -275,6 +311,7 @@ impl BackgroundControlBlock {
 
     pub fn tile(&mut self, number:u16) {
         self.tile = number;
+        self.changed(true);
     }
 
     pub fn changed(&mut self, flag:bool) {
@@ -287,6 +324,7 @@ impl BackgroundControlBlock {
 
     pub fn palette(&mut self, number:u8) {
         self.palette = number;
+        self.changed(true);
     }
 
     pub fn enable(&mut self, flag:bool) {
@@ -303,6 +341,7 @@ impl BackgroundControlBlock {
         } else {
             self.flags &= !F_BG_VFLIP;
         }
+        self.changed(true);
     }
 
     pub fn is_vertically_flipped(&self) -> bool {
@@ -315,6 +354,7 @@ impl BackgroundControlBlock {
         } else {
             self.flags &= !F_BG_HFLIP;
         }
+        self.changed(true);
     }
 
     pub fn is_horizontally_flipped(&self) -> bool {

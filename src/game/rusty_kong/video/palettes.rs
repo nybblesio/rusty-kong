@@ -12,8 +12,19 @@
 
 use super::common::*;
 
-pub fn get_palette(number:u8) -> Palette {
-    PAL_CNTL[number as usize]
+use sdl2::pixels::Color;
+use std::iter::Iterator;
+
+pub fn get_palette_colors() -> Vec<Color> {
+    PAL_CNTL.iter()
+        .flat_map(|p:&Palette|
+            p.entries.iter()
+                .map(|e:&PaletteEntry| Color::RGBA(e.r, e.g, e.b, e.a)))
+        .collect()
+}
+
+pub fn get_palette(number:u8) -> &'static Palette {
+    &PAL_CNTL[number as usize]
 }
 
 lazy_static! {

@@ -12,7 +12,7 @@
 
 use super::common::*;
 
-pub fn get_tile_bitmap<'a>(number:u8) -> &'a [u8; (TILE_WIDTH*TILE_HEIGHT) as usize] {
+pub fn get_tile_bitmap<'a>(number:u16) -> &'a [u8; (TILE_WIDTH*TILE_HEIGHT) as usize] {
     &TILE_BITMAPS[number as usize]
 }
 
