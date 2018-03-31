@@ -10,12 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1cebbeed-ce2e-4f4a-8e39-cb1f120d6d05" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/long_introduction.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/state_machine/long_introduction.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/video/common.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/video/common.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/rusty_kong/video/tile_maps.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/rusty_kong/video/tile_maps.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ripper/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/ripper/main.rs" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,37 +21,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="mod.rs" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="690">
-              <caret line="95" selection-start-line="95" selection-end-line="95" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="render.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/sdl2-0.31.0/src/sdl2/render.rs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="693">
-              <caret line="500" column="11" selection-start-line="500" selection-start-column="11" selection-end-line="500" selection-end-column="11" />
-              <folding>
-                <element signature="e#12950#12951#0" expanded="true" />
-                <element signature="e#12977#12978#0" expanded="true" />
-                <element signature="e#13379#13380#0" expanded="true" />
-                <element signature="e#13429#13430#0" expanded="true" />
-                <element signature="e#33244#33245#0" expanded="true" />
-                <element signature="e#33277#33278#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="common.rs" pinned="false" current-in-tab="false">
+      <file leaf-file-name="common.rs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/common.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="594">
-              <caret line="99" column="11" selection-start-line="99" selection-start-column="11" selection-end-line="99" selection-end-column="11" />
+            <state relative-caret-position="517">
+              <caret line="353" column="26" lean-forward="true" selection-start-line="353" selection-start-column="26" selection-end-line="353" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -158,9 +127,9 @@
         <option value="$PROJECT_DIR$/src/game/rusty_kong/mod.rs" />
         <option value="$PROJECT_DIR$/src/ripper/main.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/video/tile_maps.rs" />
-        <option value="$PROJECT_DIR$/src/game/rusty_kong/video/common.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/state_machine/long_introduction.rs" />
         <option value="$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs" />
+        <option value="$PROJECT_DIR$/src/game/rusty_kong/video/common.rs" />
       </list>
     </option>
   </component>
@@ -213,14 +182,6 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="game" type="462c0819:PsiDirectoryNode" />
               <item name="rusty_kong" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rusty-kong" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rusty-kong" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="game" type="462c0819:PsiDirectoryNode" />
-              <item name="rusty_kong" type="462c0819:PsiDirectoryNode" />
-              <item name="state_machine" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="rusty-kong" type="b2602c69:ProjectViewProjectNode" />
@@ -309,12 +270,12 @@
       <workItem from="1522147044632" duration="27427000" />
       <workItem from="1522232902935" duration="39197000" />
       <workItem from="1522406508636" duration="25930000" />
-      <workItem from="1522493162913" duration="10453000" />
+      <workItem from="1522493162913" duration="12286000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="150714000" />
+    <option name="totallyTimeSpent" value="152547000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1441" y="275" width="2560" height="1417" extended-state="6" />
@@ -323,19 +284,19 @@
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18181819" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="right" id="Cargo" order="3" />
+      <window_info anchor="bottom" id="Messages" order="7" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5004003" side_tool="true" weight="0.32942098" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3280507" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32779098" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32725832" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49959967" weight="0.49366087" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.59667194" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39936608" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.39936608" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Messages" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
     </layout>
@@ -714,10 +675,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/common.rs">
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="99" column="11" selection-start-line="99" selection-start-column="11" selection-end-line="99" selection-end-column="11" />
+        <state relative-caret-position="343">
+          <caret line="99" column="5" lean-forward="true" selection-start-line="99" selection-start-column="5" selection-end-line="99" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -736,10 +697,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/mod.rs">
+    <entry file="file://$PROJECT_DIR$/src/game/rusty_kong/video/common.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="95" selection-start-line="95" selection-end-line="95" />
+        <state relative-caret-position="517">
+          <caret line="353" column="26" lean-forward="true" selection-start-line="353" selection-start-column="26" selection-end-line="353" selection-end-column="26" />
         </state>
       </provider>
     </entry>

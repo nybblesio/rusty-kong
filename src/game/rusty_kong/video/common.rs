@@ -93,6 +93,40 @@ pub struct SpriteControlTable {
     surfaces: Vec<RefCell<Surface<'static>>>
 }
 
+fn flip_vertically(pixels: &mut [u8], width: u8, height: u8) {
+    let mut sx = 0;
+    let mut sy = height - 1;
+    for y in 0..(height / 2) {
+        for x in 0..width {
+            let target_index = (y * width + x) as usize;
+            let source_index = (sy * width + sx) as usize;
+            let temp = pixels[target_index];
+            pixels[target_index] = pixels[source_index];
+            pixels[source_index] = temp;
+            sx += 1
+        }
+        sx = 0;
+        sy -= 1;
+    }
+}
+
+fn flip_horizontally(pixels: &mut [u8], width: u8, height: u8) {
+    let mut sx = width - 1;
+    let mut sy = 0;
+    for y in 0..height {
+        for x in 0..(width / 2) {
+            let target_index = (y * width + x) as usize;
+            let source_index = (sy * width + sx) as usize;
+            let temp = pixels[target_index];
+            pixels[target_index] = pixels[source_index];
+            pixels[source_index] = temp;
+            sx -= 1;
+        }
+        sx = width - 1;
+        sy += 1;
+    }
+}
+
 impl SpriteControlTable {
     pub fn new() -> SpriteControlTable {
         let mut table = SpriteControlTable {
@@ -128,33 +162,11 @@ impl SpriteControlTable {
                     }
 
                     if block.is_horizontally_flipped() {
-                        let mut sx = 15;
-                        let mut sy = 0;
-                        for y in 0..16 {
-                            for x in 0..8 {
-                                let temp = pixels[y * 16 + x];
-                                pixels[y * 16 + x] = pixels[sy * 16 + sx];
-                                pixels[sy * 16 + sx] = temp;
-                                sx -= 1;
-                            }
-                            sx = 15;
-                            sy += 1;
-                        }
+                        flip_horizontally(pixels, 16, 16);
                     }
 
                     if block.is_vertically_flipped() {
-                        let mut sx = 0;
-                        let mut sy = 15;
-                        for y in 0..8 {
-                            for x in 0..16 {
-                                let temp = pixels[y * 16 + x];
-                                pixels[y * 16 + x] = pixels[sy * 16 + sx];
-                                pixels[sy * 16 + sx] = temp;
-                                sx += 1
-                            }
-                            sx = 0;
-                            sy -= 1;
-                        }
+                        flip_vertically(pixels, 16, 16);
                     }
                 });
                 block.changed(false);
@@ -310,7 +322,8 @@ impl BackgroundControlTable {
 
     pub fn update(&mut self, bg_surface:&mut Surface) {
         let mut block_number:usize = 0;
-        let mut tile_rect = Rect::new(0, 0, 8, 8);
+        let mut tx = 0;
+        let mut ty = 0;
 
         for block in self.table.iter_mut() {
             if block.is_changed() && block.is_enabled() {
@@ -323,42 +336,24 @@ impl BackgroundControlTable {
                     }
 
                     if block.is_horizontally_flipped() {
-                        let mut sx = 7;
-                        let mut sy = 0;
-                        for y in 0..8 {
-                            for x in 0..4 {
-                                let temp = pixels[y * 8 + x];
-                                pixels[y * 8 + x] = pixels[sy * 8 + sx];
-                                pixels[sy * 8 + sx] = temp;
-                                sx -= 1;
-                            }
-                            sx = 7;
-                            sy += 1;
-                        }
+                        flip_horizontally(pixels, 8, 8);
                     }
 
                     if block.is_vertically_flipped() {
-                        let mut sx = 0;
-                        let mut sy = 7;
-                        for y in 0..4 {
-                            for x in 0..8 {
-                                let temp = pixels[y * 8 + x];
-                                pixels[y * 8 + x] = pixels[sy * 8 + sx];
-                                pixels[sy * 8 + sx] = temp;
-                                sx += 1
-                            }
-                            sx = 0;
-                            sy -= 1;
-                        }
+                        flip_vertically(pixels, 8, 8);
                     }
                 });
                 block.changed(false);
-                surface.blit(None, bg_surface, tile_rect).unwrap();
+                surface.blit(
+                    None,
+                    bg_surface,
+                    Rect::new(tx, ty, 8, 8)).unwrap();
             }
 
-            tile_rect.offset(8, 0);
-            if tile_rect.x() == 256 {
-                tile_rect.offset(-256, 8);
+            tx += 8;
+            if tx == 256 {
+                tx = 0;
+                ty += 8;
             }
 
             block_number += 1;
