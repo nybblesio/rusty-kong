@@ -14,8 +14,6 @@ use std::rc::Rc;
 use std::marker::Sync;
 use std::cell::RefCell;
 use std::option::Option;
-use std::borrow::Borrow;
-use std::borrow::BorrowMut;
 
 use sdl2::timer::Timer;
 use sdl2::TimerSubsystem;

@@ -32,7 +32,6 @@ mod actor;
 pub use self::actor::*;
 
 use std::rc::Rc;
-use std::cell::RefCell;
 
 use sdl2::Sdl;
 use sdl2::TimerSubsystem;
