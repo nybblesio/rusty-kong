@@ -17,7 +17,6 @@ extern crate sdl2;
 use std::env;
 use std::vec::Vec;
 use std::path::Path;
-use std::collections::HashSet;
 
 use sdl2::rect::Rect;
 use sdl2::image::{LoadTexture, INIT_PNG};
@@ -57,57 +56,69 @@ struct Palette {
 }
 
 fn find_palette_match(
-        canvas: &mut WindowCanvas,
-        cx:usize,
-        cy:usize) -> u8 {
-    let mut palette_number = 0;
-    let mut unique_colors = HashSet::new();
+        color_tile: &[Color;8*8],
+        index_tile: &[u8;8*8]) -> u8 {
+    let mut palette = [Color::RGBA(0, 0, 0, 0xff);4];
 
     for _ty in 0..8 as usize {
         for _tx in 0..8 as usize {
-            let pixels = canvas
-                .read_pixels(
-                    Rect::new((cx + _tx) as i32, (cy + _ty) as i32, 1, 1),
-                    canvas.default_pixel_format())
-                .unwrap();
-            let color = Color::RGBA(pixels[0], pixels[1], pixels[2], pixels[3]);
-            if !unique_colors.contains(&color) {
-                unique_colors.insert(color);
+            let color_pixel = color_tile[_ty * 8 + _tx];
+            let index_pixel = index_tile[_ty * 8 + _tx];
+            let pal_color = palette[index_pixel as usize];
+            if color_pixel != pal_color {
+                palette[index_pixel as usize] = color_pixel;
             }
         }
     }
 
-    println!("unique_colors.len = {}", unique_colors.len());
-    for color in unique_colors.iter() {
+    println!("---------------");
+    for color in palette.iter() {
         println!("r: {}, g: {}, b: {}, a: {}", color.r, color.g, color.b, color.a);
     }
     println!();
 
+    let mut scores:Vec<u8> = vec![];
     for pal in PAL_CNTL.iter() {
-        let mut pal_score = 0;
-        for color in unique_colors.iter() {
-            for entry in pal.entries.iter() {
-                if color.r == entry.r
-                && color.g == entry.g
-                && color.b == entry.b {
-                    pal_score += 1;
+        let mut score = 0;
+        for index in 0..4 {
+            let palette_color = palette[index as usize];
+            let entry = &pal.entries[index as usize];
+            let entry_color = Color::RGBA(entry.r, entry.g, entry.b, entry.a);
+            if palette_color == entry_color {
+                if palette_color.r == 0 && palette_color.g == 0 && palette_color.b == 0 {
+                    if index == 0 || index == 3 {
+                        score += 1;
+                    }
+                } else {
+                    score += 1;
                 }
             }
         }
-        if pal_score == unique_colors.len() {
-            break;
-        }
-        palette_number += 1;
+        scores.push(score);
     }
 
+    let mut highest_score = 0;
+    let mut palette_number = 0;
+    for i in 0..scores.len() {
+        let score = scores[i];
+        if score > highest_score {
+            println!("palette {} has a score of {}", i, score);
+            highest_score = score;
+            palette_number = i;
+        }
+    }
+
+    println!("palette_number = {}", palette_number);
+    println!();
+    println!("---------------");
     palette_number as u8
 }
 
 fn create_match_bitmap(
         canvas: &mut WindowCanvas,
         cx:usize,
-        cy:usize) -> [u8; 8*8] {
-    let mut tile_data = [0 as u8; 8*8];
+        cy:usize) -> [Color; 8*8] {
+    let mut tile_data = [Color::RGBA(0, 0, 0, 0xff); 8*8];
 
     for _ty in 0..8 as usize {
         for _tx in 0..8 as usize {
@@ -116,14 +127,8 @@ fn create_match_bitmap(
                     Rect::new((cx + _tx) as i32, (cy + _ty) as i32, 1, 1),
                     canvas.default_pixel_format())
                 .unwrap();
-            if pixels[0] != 0 && pixels[1] != 0 && pixels[2] != 0 {
-                //print!("1");
-                tile_data[_ty * 8 + _tx] = 1;
-            } else {
-                //print!("0");
-            }
+            tile_data[_ty * 8 + _tx] = Color::RGBA(pixels[0], pixels[1], pixels[2], 0xff);
         }
-        //println!();
     }
 
     tile_data
@@ -167,21 +172,22 @@ fn run(mode:ToolMode, png: &Path) {
             let mut _cx:usize = 0;
             for _y in 0..32 {
                 for _x in 0..32 {
-                    let palette_number = find_palette_match(&mut canvas, _cx, _cy);
                     let tile_data = create_match_bitmap(&mut canvas, _cx, _cy);
-
                     for tile_number in 0..256 {
                         let ref_tile:&[u8; 64] = &TILE_BITMAPS[tile_number];
                         let mut equal = true;
                         for pixel in 0..64 {
                             let ref_has_pixel = ref_tile[pixel] != 0;
-                            let map_has_pixel = tile_data[pixel] != 0;
+                            let map_has_pixel = tile_data[pixel].r != 0
+                                || tile_data[pixel].g != 0
+                                || tile_data[pixel].b != 0;
                             if ref_has_pixel != map_has_pixel {
                                 equal = false;
                                 break;
                             }
                         }
                         if equal {
+                            let palette_number = find_palette_match(&tile_data, ref_tile);
                             tile_map[_y * 32 + _x] = TileMapEntry(
                                 tile_number as u16,
                                 palette_number as u8,
@@ -436,6 +442,8 @@ fn main() {
 
         run(mode, Path::new(&args[2]));
     }
+
+//    run(ToolMode::Map, Path::new("assets/intro-tilemap.png"));
 }
 
 lazy_static! {
