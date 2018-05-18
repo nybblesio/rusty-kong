@@ -359,8 +359,8 @@ fn run(mode:ToolMode, png: &Path) {
             let mut sprite_idx = 0;
 
             for _ty in 0..2 {
-                for _tx in 0..67 {
-                    if sprite_idx == 96 {
+                for _tx in 0..68 {
+                    if sprite_idx == 127 {
                         break;
                     }
                     let mut spr_data = [0 as u8; 16*16];
